@@ -48,3 +48,40 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+# Create APK
+1. Install dependencies
+```bash
+npm install --global expo-cli eas-cli
+```
+
+2. Initialize EAS
+```bash
+eas init
+```
+
+3. Configure EAS (Generate `eas.json`)
+```bash
+eas build:configure
+```
+
+4. Edit `eas.json` and add to either `development` or `preview`
+```diff
++"android": {
++  "buildType": "apk"
++}
+```
+
+5. Run with profile preview (We're using profile `preview`)
+```bash
+eas build --platform android --profile preview
+```
+
+## Secret EAS
+```
+eas secret:list
+```
+
+```
+eas secret:create --scope project --name SECRET_NAME --value secretvalue --type string
+```
