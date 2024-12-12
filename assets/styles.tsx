@@ -8,6 +8,8 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    loginPage: {
         padding: 20,
     },
     quadrantSkeleton: {
@@ -47,6 +49,9 @@ export const styles = StyleSheet.create({
     },
     textBold: {
         fontWeight: 700,
+    },
+    textCenter: {
+        textAlign: "center",
     },
     imgFluid: {
         resizeMode: "contain", // Ensure the image scales correctly
