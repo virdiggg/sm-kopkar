@@ -1,7 +1,7 @@
 // import { Image, StyleSheet, Platform } from 'react-native';
 // import { HelloWave } from '@/components/HelloWave';
 // import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -11,12 +11,15 @@ import { isSignedIn, getToken, signIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
+const { width, height } = Dimensions.get("window"); // Get screen dimensions
+
 export default function HomeScreen() {
   const [token, setToken] = useState('');
   const [errors, setErrors] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     const checkIfSignedIn = async () => {
       const signedIn = await isSignedIn();
       if (!signedIn) {
@@ -24,7 +27,6 @@ export default function HomeScreen() {
         return;
       }
 
-      setIsLoading(true);
       setErrors('');
 
       const userToken = await getToken();
@@ -50,10 +52,10 @@ export default function HomeScreen() {
         // console.log("Error:", error);
         // setErrors(error);
       } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 3000);
-        // setIsLoading(false);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 3000);
+        setIsLoading(false);
       }
     };
 
@@ -62,16 +64,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <ThemedView style={[glStyles.container, glStyles.itemCenter]}>
-        <Stack.Screen options={{
-          title: 'Beranda',
-          headerStyle: {
-            backgroundColor: '#2e96b8',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 600,
-          },
-        }} />
+        <Stack.Screen options={{ headerShown: false }} />
         <ActivityIndicator color="#2e96b8" size="large" />
       </ThemedView>
     );
@@ -79,31 +72,38 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{
-        title: 'Beranda',
-        headerStyle: {
-          backgroundColor: '#2e96b8',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 600,
-        },
-      }} />
+      <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.grid}>
         <ThemedView style={styles.row}>
           <ThemedView style={[styles.quadrant, styles.topLeft]}>
-            <ThemedText style={styles.text}>Top Left</ThemedText>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={[styles.logo, glStyles.imgFluid]}
+            />
+            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Top Left</ThemedText>
           </ThemedView>
           <ThemedView style={[styles.quadrant, styles.topRight]}>
-            <ThemedText style={styles.text}>Top Right</ThemedText>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={[styles.logo, glStyles.imgFluid]}
+            />
+            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Top Right</ThemedText>
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.row}>
           <ThemedView style={[styles.quadrant, styles.bottomLeft]}>
-            <ThemedText style={styles.text}>Bottom Left</ThemedText>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={[styles.logo, glStyles.imgFluid]}
+            />
+            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Bottom Left</ThemedText>
           </ThemedView>
           <ThemedView style={[styles.quadrant, styles.bottomRight]}>
-            <ThemedText style={styles.text}>Bottom Right</ThemedText>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={[styles.logo, glStyles.imgFluid]}
+            />
+            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Bottom Right</ThemedText>
           </ThemedView>
         </ThemedView>
       </ThemedView>
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#DDD',
+    // borderWidth: 1,
+    // borderColor: '#DDD',
   },
   topLeft: {
     backgroundColor: '#FFC107',
@@ -160,7 +160,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#E91E63',
   },
   text: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontWeight: 600,
+  },
+  logo: {
+    width: width * 0.5, // 50% of screen width
+    height: height * 0.2, // 20% of screen height
   },
 });

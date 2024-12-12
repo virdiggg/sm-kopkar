@@ -42,6 +42,12 @@ export const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
     },
+    buttonTextTheme: {
+        color: '#2e96b8',
+    },
+    textBold: {
+        fontWeight: 700,
+    },
     imgFluid: {
         resizeMode: "contain", // Ensure the image scales correctly
     },

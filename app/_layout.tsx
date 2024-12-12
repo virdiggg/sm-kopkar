@@ -41,7 +41,8 @@ export default function RootLayout() {
   };
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <PaperProvider theme={theme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
