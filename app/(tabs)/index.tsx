@@ -1,12 +1,15 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+// import { Image, StyleSheet, Platform } from 'react-native';
+// import { HelloWave } from '@/components/HelloWave';
+// import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
 import { router } from 'expo-router';
-import { isSignedIn, getToken } from '@/services/auth';
+import { useRouter, Stack } from "expo-router";
+import { isSignedIn, getToken, signIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
+import { styles as glStyles } from "@/assets/styles";
 
 export default function HomeScreen() {
   const [token, setToken] = useState('');
@@ -21,83 +24,90 @@ export default function HomeScreen() {
         return;
       }
 
+      setIsLoading(true);
+      setErrors('');
+
       const userToken = await getToken();
       setToken(userToken);
       try {
-          const response = await fetchWithRetry(`auth/sign-in`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": "123",
-              }
-          });
+        // Refresh token jadi gak expired
+        const response = await fetchWithRetry(`auth/verify`, {
+          method: "POST",
+        });
 
-          if (response && response.statusCode !== 200) {
-              setErrors(response.message);
-              return;
-          }
+        // Kalo bukan 200 berarti token invalid,
+        // jadi hapus aja token dari storage, terus redirect ke login
+        if (response && response.statusCode !== 200) {
+          signOut();
+          router.replace("/login");
+          return;
+        }
 
-          // // Simpan token di storage
-          // signIn(response.token);
+        // Simpan token baru di storage
+        signIn(response.token);
 
-          // checkIfSignedIn();
-          // return;
       } catch (error: any) {
-          // console.log("Error:", error);
-          // setErrors(error);
+        // console.log("Error:", error);
+        // setErrors(error);
       } finally {
+        setTimeout(() => {
           setIsLoading(false);
+        }, 3000);
+        // setIsLoading(false);
       }
     };
 
     checkIfSignedIn();
   }, []);
+  if (isLoading) {
+    return (
+      <ThemedView style={[glStyles.container, glStyles.itemCenter]}>
+        <Stack.Screen options={{
+          title: 'Beranda',
+          headerStyle: {
+            backgroundColor: '#2e96b8',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 600,
+          },
+        }} />
+        <ActivityIndicator color="#2e96b8" size="large" />
+      </ThemedView>
+    );
+  }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+    <ThemedView style={styles.container}>
+      <Stack.Screen options={{
+        title: 'Beranda',
+        headerStyle: {
+          backgroundColor: '#2e96b8',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 600,
+        },
+      }} />
+      <ThemedView style={styles.grid}>
+        <ThemedView style={styles.row}>
+          <ThemedView style={[styles.quadrant, styles.topLeft]}>
+            <ThemedText style={styles.text}>Top Left</ThemedText>
+          </ThemedView>
+          <ThemedView style={[styles.quadrant, styles.topRight]}>
+            <ThemedText style={styles.text}>Top Right</ThemedText>
+          </ThemedView>
+        </ThemedView>
+        <ThemedView style={styles.row}>
+          <ThemedView style={[styles.quadrant, styles.bottomLeft]}>
+            <ThemedText style={styles.text}>Bottom Left</ThemedText>
+          </ThemedView>
+          <ThemedView style={[styles.quadrant, styles.bottomRight]}>
+            <ThemedText style={styles.text}>Bottom Right</ThemedText>
+          </ThemedView>
+        </ThemedView>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </ThemedView>
   );
 }
 
@@ -117,5 +127,40 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  container: {
+    flex: 1,
+  },
+  grid: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  quadrant: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DDD',
+  },
+  topLeft: {
+    backgroundColor: '#FFC107',
+  },
+  topRight: {
+    backgroundColor: '#03A9F4',
+  },
+  bottomLeft: {
+    backgroundColor: '#4CAF50',
+  },
+  bottomRight: {
+    backgroundColor: '#E91E63',
+  },
+  text: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });
