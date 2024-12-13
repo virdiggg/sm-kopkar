@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { useRouter, Stack } from "expo-router";
 import { isSignedIn, signIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
+import { setItem } from '@/services/storage';
 import { styles as glStyles } from "@/assets/styles";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
@@ -50,6 +51,7 @@ export default function HomeScreen() {
         // Simpan token baru di storage
         signIn(response.token);
         setNama(response.user.nama);
+        setItem('name', response.user.nama);
 
       } catch (error: any) {
         // console.log("Error:", error);
