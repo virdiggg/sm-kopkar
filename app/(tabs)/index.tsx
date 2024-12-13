@@ -1,5 +1,5 @@
 import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { Text, ActivityIndicator } from "react-native-paper";
+import { Text, ActivityIndicator, Button } from "react-native-paper";
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -81,6 +81,12 @@ export default function HomeScreen() {
     router.replace("/(tabs)/profile");
   }
 
+  const handleLogout = () => {
+    signOut();
+    router.replace("/login");
+    return;
+  }
+
   if (isLoading) {
     return (
       <ThemedView style={[glStyles.container, glStyles.itemCenter]}>
@@ -154,6 +160,11 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
+        <ThemedView style={styles.footer}>
+          <Button mode="contained" onPress={handleLogout} disabled={isLoading} style={glStyles.button}>
+            <Text style={glStyles.buttonText}>Logout</Text>
+          </Button>
+        </ThemedView>
       </ThemedView>
     </ThemedView>
   );
@@ -191,6 +202,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 20,
     paddingTop: 120,
+  },
+  footer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
   },
   row: {
     flex: 1,
