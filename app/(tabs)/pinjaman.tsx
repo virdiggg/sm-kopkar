@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Dimensions } from "react-native";
+import { StyleSheet, TouchableOpacity, Keyboard, Image,TouchableWithoutFeedback, Dimensions } from "react-native";
 import { Text, ActivityIndicator, Button, TextInput } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -98,6 +98,10 @@ export default function PinjamanScreen() {
         }} />
         <ThemedView style={styles.header}>
           <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
+          <Image
+            source={require('@/assets/images/pinjaman.png')}
+            style={[styles.logo, glStyles.imgFluid]}
+          />
         </ThemedView>
         <ThemedView style={[styles.row, { padding: 20 }]}>
           <TextInput
@@ -121,7 +125,7 @@ export default function PinjamanScreen() {
             {isSubmit ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={glStyles.buttonText}>Simpan</Text>
+              <Text style={glStyles.buttonText}>Pinjam</Text>
             )}
           </Button>
         </ThemedView>
