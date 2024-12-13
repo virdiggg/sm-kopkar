@@ -38,10 +38,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="profile"
         options={{
-          title: 'Explore',
+          title: 'Profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="simpanan"
+        options={{
+          title: 'Simpanan',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="pinjaman"
+        options={{
+          title: 'Pinjaman',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarStyle: {
+            display: "none",
+          },
         }}
       />
     </Tabs>

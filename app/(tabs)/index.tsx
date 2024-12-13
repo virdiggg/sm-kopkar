@@ -60,12 +60,12 @@ export default function HomeScreen() {
     router.replace("/(tabs)/history");
   }
 
-  const goToBayar = () => {
-    router.replace("/(tabs)/bayar");
+  const goToPinjaman = () => {
+    router.replace("/(tabs)/pinjaman");
   }
 
-  const goToSimpan = () => {
-    router.replace("/(tabs)/simpan");
+  const goToSimpanan = () => {
+    router.replace("/(tabs)/simpanan");
   }
 
   const goToProfile = () => {
@@ -105,7 +105,7 @@ export default function HomeScreen() {
           </ThemedView>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToBayar}
+              onPress={goToPinjaman}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
@@ -113,14 +113,14 @@ export default function HomeScreen() {
                 source={require('@/assets/images/bayar.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
-              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Bayar</ThemedText>
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Pinjaman</ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.row}>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToSimpan}
+              onPress={goToSimpanan}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
@@ -128,7 +128,7 @@ export default function HomeScreen() {
                 source={require('@/assets/images/simpan.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
-              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Simpan</ThemedText>
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Simpanan</ThemedText>
             </TouchableOpacity>
           </ThemedView>
           <ThemedView style={styles.quadrant}>

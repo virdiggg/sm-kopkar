@@ -70,18 +70,9 @@ export default function LoginScreen() {
 
   return (
     <>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={[glStyles.container, glStyles.itemCenter]}>
-          <Stack.Screen options={{
-            title: 'Login',
-            headerStyle: {
-              backgroundColor: '#2e96b8',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 600,
-            },
-          }} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={glStyles.container}>
+        <View style={[glStyles.itemCenter, styles.loginWrapper]}>
+          <Stack.Screen options={{ headerShown: false }} />
           <Image
             source={require('@/assets/images/logo.png')}
             style={[styles.logo, glStyles.imgFluid]}
@@ -150,5 +141,11 @@ const styles = StyleSheet.create({
     width: width * 0.5, // 50% of screen width
     height: height * 0.2, // 20% of screen height
     marginBottom: 30,
+  },
+  loginWrapper: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    marginTop: 20
   },
 });
