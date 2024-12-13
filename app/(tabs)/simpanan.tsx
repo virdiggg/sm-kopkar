@@ -64,13 +64,19 @@ export default function SimpananScreen() {
         body: param,
       });
 
-      if (response.ok) {
-        // router.replace("/(tabs)/profile");
-      } else {
+      if (response && response.statusCode !== 200) {
         setErrors(response.message);
+        return;
       }
+
+      setSimpananPokok('');
+      setTimeout(() => {
+        router.replace("/(tabs)");
+      }, 3000);
+      return;
     } catch (error) {
-      // setErrors(error.message);
+      // console.log("Error:", error);
+      // setErrors(error);
     } finally {
       setIsSubmit(false);
     }

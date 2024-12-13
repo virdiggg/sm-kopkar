@@ -66,7 +66,10 @@ export default function PinjamanScreen() {
         return;
       }
 
-      router.replace("/(tabs)");
+      setSimpananPokok('');
+      setTimeout(() => {
+        router.replace("/(tabs)");
+      }, 3000);
       return;
     } catch (error: any) {
       // console.log("Error:", error);
