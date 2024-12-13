@@ -145,7 +145,7 @@ export default function PinjamanScreen() {
           {errors && errors.simpanan_sukarela && <HelperText type="error" style={glStyles.textDanger}>{errors.simpanan_sukarela}</HelperText>}
         </ThemedView>
         <ThemedView style={[styles.row, { padding: 20 }]}>
-          <Text style={glStyles.textDanger}>{errorMsg}</Text>
+        <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>
           <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
             {isSubmit ? (
               <ActivityIndicator color="#fff" />

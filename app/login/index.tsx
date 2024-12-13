@@ -116,7 +116,7 @@ export default function LoginScreen() {
               />
             }
           />
-          <Text style={glStyles.textDanger}>{errorMsg}</Text>
+          <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>
           <Button mode="contained" onPress={handleLogin} disabled={isSubmit} style={glStyles.button}>
             {isSubmit ? (
               <ActivityIndicator color="#fff" />

@@ -141,7 +141,7 @@ export default function SimpananScreen() {
       // Create a FormData object
       const formData = new FormData();
       formData.append('simpanan_sukarela', simpananPokok);
-      formData.append('image', {
+      formData.append('bukti_transfer', {
         uri: selectedImage,
         name: `photo_${Date.now()}.${mime.ext}`,
         type: mime.mimeType,
@@ -245,7 +245,7 @@ export default function SimpananScreen() {
           )}
         </ThemedView>) : null}
         <ThemedView style={styles.row}>
-          <Text style={glStyles.textDanger}>{errorMsg}</Text>
+          <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>
           <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
             {isSubmit ? (
               <ActivityIndicator color="#fff" />
