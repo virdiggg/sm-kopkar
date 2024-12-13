@@ -21,14 +21,16 @@ const { width, height } = Dimensions.get("window"); // Get screen dimensions
 export default function PinjamanScreen() {
   const [errors, setErrors] = useState({});
   const [errorMsg, setErrorMsg] = useState('');
-  const [simpananPokok, setSimpananPokok] = useState('');
+  const [jumlahPinjaman, setJumlahPinjaman] = useState('');
+  const [lamaAngsuran, setLamaAngsuran] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
     setErrors({});
     setErrorMsg('');
-    setSimpananPokok('');
+    setJumlahPinjaman('');
+    setLamaAngsuran('');
     setIsLoading(false);
     setIsSubmit(false);
 
@@ -49,7 +51,8 @@ export default function PinjamanScreen() {
     return () => {
       setErrors({});
       setErrorMsg('');
-      setSimpananPokok('');
+      setJumlahPinjaman('');
+      setLamaAngsuran('');
       setIsLoading(false);
       setIsSubmit(false);
     };
@@ -65,9 +68,26 @@ export default function PinjamanScreen() {
     setErrors({});
     Keyboard.dismiss();
 
+    if (jumlahPinjaman.length === 0 || parseInt(jumlahPinjaman) > 15000000) {
+      setIsSubmit(false);
+      setErrors({
+        jumlah_pinjaman: 'Jumlah simpanan sukarela tidak boleh kosong',
+      });
+      return;
+    }
+
+    if (lamaAngsuran.length === 0) {
+      setIsSubmit(false);
+      setErrors({
+        lama_angsuran: 'Jumlah simpanan sukarela tidak boleh kosong',
+      });
+      return;
+    }
+
     try {
       let param = JSON.stringify({
-        'simpanan_sukarela': simpananPokok
+        'jumlah_pinjaman': jumlahPinjaman,
+        'lama_angsuran': lamaAngsuran,
       })
       const response = await fetchWithRetry(`trx/loan`, {
         method: "POST",
@@ -83,7 +103,8 @@ export default function PinjamanScreen() {
       }
 
       showToast(response.message);
-      setSimpananPokok('');
+      setJumlahPinjaman('');
+      setLamaAngsuran('');
       setTimeout(() => {
         router.replace("/(tabs)");
       }, 2000);
@@ -94,6 +115,15 @@ export default function PinjamanScreen() {
     } finally {
       setIsSubmit(false);
     }
+  }
+
+  const handleJumlahPinjam = (text: string) => {
+    if (parseInt(text) < 0) {
+      text = '0';
+    } else if (parseInt(text) > 15000000) {
+      text = '15000000';
+    }
+    setJumlahPinjaman(text);
   }
 
   const showToast = (message: string) => {
@@ -129,9 +159,9 @@ export default function PinjamanScreen() {
         </ThemedView>
         <ThemedView style={[styles.row, { padding: 20 }]}>
           <TextInput
-            label="Simpanan Pokok (Rp)"
-            value={simpananPokok}
-            onChangeText={setSimpananPokok}
+            label="Jumlah (Max Rp. 15.000.000)"
+            value={jumlahPinjaman}
+            onChangeText={handleJumlahPinjam}
             keyboardType="numeric"
             style={glStyles.input}
             disabled={isLoading}
@@ -141,8 +171,27 @@ export default function PinjamanScreen() {
             textColor="#2e96b8"
             underlineColor="#2e96b8"
             activeUnderlineColor="#2e96b8"
+            enterKeyHint="next"
           />
-          {errors && errors.simpanan_sukarela && <HelperText type="error" style={glStyles.textDanger}>{errors.simpanan_sukarela}</HelperText>}
+          {errors && errors.jumlah_pinjaman && <HelperText type="error" style={glStyles.textDanger}>{errors.jumlah_pinjaman}</HelperText>}
+        </ThemedView>
+        <ThemedView style={[styles.row, { padding: 20 }]}>
+          <TextInput
+            label="Lama Angsuran (Bulan)"
+            value={lamaAngsuran}
+            onChangeText={setLamaAngsuran}
+            keyboardType="numeric"
+            style={glStyles.input}
+            disabled={isLoading}
+            mode="outlined"
+            autoComplete="off"
+            outlineColor="#2e96b8"
+            textColor="#2e96b8"
+            underlineColor="#2e96b8"
+            activeUnderlineColor="#2e96b8"
+            enterKeyHint="enter"
+          />
+          {errors && errors.lama_angsuran && <HelperText type="error" style={glStyles.textDanger}>{errors.lama_angsuran}</HelperText>}
         </ThemedView>
         <ThemedView style={[styles.row, { padding: 20 }]}>
         <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>

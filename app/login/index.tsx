@@ -99,6 +99,7 @@ export default function LoginScreen() {
             style={glStyles.input}
             disabled={isSubmit}
             autoCapitalize='none'
+            enterKeyHint="next"
             right={<TextInput.Icon icon="email" />}
           />
           <TextInput
@@ -109,6 +110,7 @@ export default function LoginScreen() {
             style={glStyles.input}
             disabled={isSubmit}
             autoCapitalize='none'
+            enterKeyHint="enter"
             right={
               <TextInput.Icon
                 icon={showPassword ? "eye-off" : "eye"} // Change icon based on state
