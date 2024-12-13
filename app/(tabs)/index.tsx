@@ -19,13 +19,13 @@ export default function HomeScreen() {
   useEffect(() => {
     setIsLoading(true);
     const checkIfSignedIn = async () => {
+      setErrors('');
+
       const signedIn = await isSignedIn();
       if (!signedIn) {
         router.replace("/login");
         return;
       }
-
-      setErrors('');
 
       try {
         // Refresh token jadi gak expired
@@ -57,23 +57,19 @@ export default function HomeScreen() {
   }, []);
 
   const goToHistory = () => {
-    router.replace("/history");
-
+    router.replace("/(tabs)/history");
   }
 
   const goToBayar = () => {
-    router.replace("/bayar");
-
+    router.replace("/(tabs)/bayar");
   }
 
   const goToSimpan = () => {
-    router.replace("/simpan");
-
+    router.replace("/(tabs)/simpan");
   }
 
   const goToProfile = () => {
     router.replace("/(tabs)/profile");
-
   }
 
   if (isLoading) {

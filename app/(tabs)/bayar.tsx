@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Text, ActivityIndicator, TextInput } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -8,11 +8,9 @@ import { isSignedIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
-
-export default function ProfileScreen() {
+export default function BayarScreen() {
   const [errors, setErrors] = useState('');
-  const [user, setUser] = useState({});
+  const [simpananPokok, setSimpananPokok] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -25,34 +23,7 @@ export default function ProfileScreen() {
         router.replace("/login");
         return;
       }
-
-      try {
-        // Refresh token jadi gak expired
-        const response = await fetchWithRetry(`user/my-profile`, {
-          method: "POST",
-        });
-
-        // Kalo bukan 200 berarti token invalid,
-        // jadi hapus aja token dari storage, terus redirect ke login
-        if (response && response.statusCode !== 200) {
-          signOut();
-          router.replace("/login");
-          return;
-        }
-
-        // Simpan token baru di storage
-        setUser(response.data);
-
-      } catch (error: any) {
-        // console.log("Error:", error);
-        // setErrors(error);
-      } finally {
-        // setTimeout(() => {
-        //   setIsLoading(false);
-        // }, 3000);
-        setIsLoading(false);
-      }
-    };
+    }
 
     checkIfSignedIn();
   }, []);
@@ -71,7 +42,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ThemedView style={glStyles.container}>
+    <TouchableWithoutFeedback style={glStyles.container}>
       <Stack.Screen options={{
         headerShown: true,
         headerRight: () => (
@@ -82,8 +53,7 @@ export default function ProfileScreen() {
       }} />
       <ThemedView style={styles.grid}>
         <ThemedView style={styles.header}>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 37 }]}>Profile</Text>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Anggota Koperasi Karyawan</Text>
+          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
         </ThemedView>
         <ThemedView style={styles.row}>
           <Text style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter, { fontSize: 20 }]}>Nama:</Text>
@@ -146,7 +116,7 @@ export default function ProfileScreen() {
           />
         </ThemedView>
       </ThemedView>
-    </ThemedView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -169,7 +139,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     width: '100%',
-    paddingHorizontal: width * 0.05,
   },
   input: {
     width: "100%",
