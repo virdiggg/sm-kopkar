@@ -103,6 +103,7 @@ export default function LoginScreen() {
             secureTextEntry={!showPassword}
             style={glStyles.input}
             disabled={isLoading}
+            autoCapitalize='none'
             right={
               <TextInput.Icon
                 icon={showPassword ? "eye-off" : "eye"} // Change icon based on state

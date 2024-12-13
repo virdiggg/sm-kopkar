@@ -1,7 +1,7 @@
 // import { Image, StyleSheet, Platform } from 'react-native';
 // import { HelloWave } from '@/components/HelloWave';
 // import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { StyleSheet, Image, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity, Text, Dimensions, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ export default function HomeScreen() {
   const [token, setToken] = useState('');
   const [errors, setErrors] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [nama, setNama] = useState('');
 
   useEffect(() => {
     setIsLoading(true);
@@ -47,20 +48,35 @@ export default function HomeScreen() {
 
         // Simpan token baru di storage
         signIn(response.token);
+        setNama(response.user.nama);
 
       } catch (error: any) {
         // console.log("Error:", error);
         // setErrors(error);
       } finally {
-        // setTimeout(() => {
-        //   setIsLoading(false);
-        // }, 3000);
         setIsLoading(false);
       }
     };
 
     checkIfSignedIn();
   }, []);
+
+  const goToHistory = () => {
+    router.replace("/explore");
+  }
+
+  const goToBayar = () => {
+    router.replace("/bayar");
+  }
+
+  const goToSimpan = () => {
+    router.replace("/simpan");
+  }
+
+  const goToProfile = () => {
+    router.replace("/profile");
+  }
+
   if (isLoading) {
     return (
       <ThemedView style={[glStyles.container, glStyles.itemCenter]}>
@@ -71,39 +87,67 @@ export default function HomeScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={glStyles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.grid}>
+        <ThemedView style={styles.header}>
+          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, {fontSize: 37}]}>Welcome, {nama}</Text>
+          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, {fontSize: 20}]}>Koperasi Karyawan Pasar Rebo</Text>
+        </ThemedView>
         <ThemedView style={styles.row}>
-          <ThemedView style={[styles.quadrant, styles.topLeft]}>
-            <Image
-              source={require('@/assets/images/logo.png')}
-              style={[styles.logo, glStyles.imgFluid]}
-            />
-            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Top Left</ThemedText>
+          <ThemedView style={styles.quadrant}>
+            <TouchableOpacity
+              onPress={goToHistory}
+              disabled={isLoading}
+              style={[styles.button, glStyles.itemCenter]}
+            >
+              <Image
+                source={require('@/assets/images/history.png')}
+                style={[styles.logo, glStyles.imgFluid]}
+              />
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>History</ThemedText>
+            </TouchableOpacity>
           </ThemedView>
-          <ThemedView style={[styles.quadrant, styles.topRight]}>
-            <Image
-              source={require('@/assets/images/logo.png')}
-              style={[styles.logo, glStyles.imgFluid]}
-            />
-            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Top Right</ThemedText>
+          <ThemedView style={styles.quadrant}>
+            <TouchableOpacity
+              onPress={goToHistory}
+              disabled={isLoading}
+              style={[styles.button, glStyles.itemCenter]}
+            >
+              <Image
+                source={require('@/assets/images/bayar.png')}
+                style={[styles.logo, glStyles.imgFluid]}
+              />
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Bayar</ThemedText>
+            </TouchableOpacity>
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.row}>
-          <ThemedView style={[styles.quadrant, styles.bottomLeft]}>
-            <Image
-              source={require('@/assets/images/logo.png')}
-              style={[styles.logo, glStyles.imgFluid]}
-            />
-            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Bottom Left</ThemedText>
+          <ThemedView style={styles.quadrant}>
+            <TouchableOpacity
+              onPress={goToHistory}
+              disabled={isLoading}
+              style={[styles.button, glStyles.itemCenter]}
+            >
+              <Image
+                source={require('@/assets/images/simpan.png')}
+                style={[styles.logo, glStyles.imgFluid]}
+              />
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Simpan</ThemedText>
+            </TouchableOpacity>
           </ThemedView>
-          <ThemedView style={[styles.quadrant, styles.bottomRight]}>
-            <Image
-              source={require('@/assets/images/logo.png')}
-              style={[styles.logo, glStyles.imgFluid]}
-            />
-            <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold]}>Bottom Right</ThemedText>
+          <ThemedView style={styles.quadrant}>
+            <TouchableOpacity
+              onPress={goToHistory}
+              disabled={isLoading}
+              style={[styles.button, glStyles.itemCenter]}
+            >
+              <Image
+                source={require('@/assets/images/profile.png')}
+                style={[styles.logo, glStyles.imgFluid]}
+              />
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Profile</ThemedText>
+            </TouchableOpacity>
           </ThemedView>
         </ThemedView>
       </ThemedView>
@@ -136,6 +180,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  header: {
+    width: '100%',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 20,
+    paddingTop: 120,
+  },
   row: {
     flex: 1,
     flexDirection: 'row',
@@ -144,27 +196,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 1,
-    // borderColor: '#DDD',
-  },
-  topLeft: {
-    backgroundColor: '#FFC107',
-  },
-  topRight: {
-    backgroundColor: '#03A9F4',
-  },
-  bottomLeft: {
-    backgroundColor: '#4CAF50',
-  },
-  bottomRight: {
-    backgroundColor: '#E91E63',
+    backgroundColor: '#fff',
   },
   text: {
     color: '#fff',
     fontWeight: 600,
   },
+  button: {
+    marginTop: 10,
+    width: "100%",
+    padding: 5,
+  },
   logo: {
-    width: width * 0.5, // 50% of screen width
+    width: width * 0.3, // 50% of screen width
     height: height * 0.2, // 20% of screen height
   },
 });
