@@ -33,13 +33,11 @@ export default function SimpananScreen() {
     setErrors({});
     setErrorMsg('');
     setSimpananPokok('');
-    setIsLoading(false);
     setIsSubmit(false);
     setSelectedImage(null);
+    setIsLoading(true);
 
     const checkIfSignedIn = async () => {
-      setIsLoading(true);
-
       const signedIn = await isSignedIn();
       if (!signedIn) {
         router.replace("/login");

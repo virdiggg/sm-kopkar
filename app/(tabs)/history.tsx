@@ -4,26 +4,24 @@ import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
 import { router } from 'expo-router';
 import { useRouter, Stack } from "expo-router";
-import { isSignedIn, signOut } from '@/services/auth';
-import { fetchWithRetry } from "@/services/fetching";
+import { isSignedIn } from '@/services/auth';
 import { getItem } from '@/services/storage';
 import { styles as glStyles } from "@/assets/styles";
+import Header from "@/components/Header";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 export default function HistoryScreen() {
   const [errors, setErrors] = useState('');
-  const [name, setName] = useState('');
+  const [nama, setNama] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setErrors('');
-    setName('');
-    setIsLoading(false);
+    setNama('');
+    setIsLoading(true);
 
     const checkIfSignedIn = async () => {
-      setIsLoading(true);
-
       const signedIn = await isSignedIn();
       const name = await getItem('name');
       if (!signedIn || !name) {
@@ -31,7 +29,7 @@ export default function HistoryScreen() {
         return;
       }
 
-      setName(name);
+      setNama(name);
       setIsLoading(false);
     }
 
@@ -39,7 +37,7 @@ export default function HistoryScreen() {
 
     return () => {
       setErrors('');
-      setName('');
+      setNama('');
       setIsLoading(false);
     };
   }, []);
@@ -76,10 +74,10 @@ export default function HistoryScreen() {
         )
       }} />
       <ThemedView style={styles.grid}>
-        <ThemedView style={styles.header}>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 37 }]}>History {"\n" + name}</Text>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { paddingHorizontal: 10, fontSize: 20 }]}>Riwayat simpan pinjam Koperasi Karyawan Pasar Rebo</Text>
-        </ThemedView>
+        <Header
+          title={`History \n${nama}`}
+          subtitle="Riwayat simpan pinjam Koperasi Karyawan Pasar Rebo"
+        />
         <ThemedView style={styles.row}>
           <TouchableOpacity
             onPress={goToPinjaman}
@@ -112,14 +110,6 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 20,
-    paddingTop: 20,
-  },
   grid: {
     flex: 1,
     justifyContent: 'center',

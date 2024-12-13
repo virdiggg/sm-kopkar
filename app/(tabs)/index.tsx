@@ -9,6 +9,7 @@ import { isSignedIn, signIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { setItem } from '@/services/storage';
 import { styles as glStyles } from "@/assets/styles";
+import Header from "@/components/Header";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
@@ -105,10 +106,11 @@ export default function HomeScreen() {
     <ThemedView style={glStyles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.grid}>
-        <ThemedView style={styles.header}>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, {fontSize: 37}]}>Welcome, {nama}</Text>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, {fontSize: 20}]}>Koperasi Karyawan Pasar Rebo</Text>
-        </ThemedView>
+        <Header
+          title={`Welcome \n${nama}`}
+          subtitle="Koperasi Karyawan Pasar Rebo"
+          titleStyle={{ paddingTop: 120 }}
+        />
         <ThemedView style={styles.row}>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
@@ -199,14 +201,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    width: '100%',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 20,
-    paddingTop: 120,
   },
   footer: {
     width: '100%',

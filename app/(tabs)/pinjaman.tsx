@@ -31,12 +31,11 @@ export default function PinjamanScreen() {
     setErrorMsg('');
     setJumlahPinjaman('');
     setLamaAngsuran('');
-    setIsLoading(false);
     setIsSubmit(false);
 
-    const checkIfSignedIn = async () => {
-      setIsLoading(true);
+    setIsLoading(true);
 
+    const checkIfSignedIn = async () => {
       const signedIn = await isSignedIn();
       if (!signedIn) {
         router.replace("/login");

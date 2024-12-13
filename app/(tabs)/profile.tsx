@@ -7,6 +7,7 @@ import { useRouter, Stack } from "expo-router";
 import { isSignedIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
+import Header from "@/components/Header";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
@@ -18,11 +19,9 @@ export default function ProfileScreen() {
   useEffect(() => {
     setErrors('');
     setUser('');
-    setIsLoading(false);
+    setIsLoading(true);
 
     const checkIfSignedIn = async () => {
-      setIsLoading(true);
-
       const signedIn = await isSignedIn();
       if (!signedIn) {
         router.replace("/login");
@@ -92,10 +91,10 @@ export default function ProfileScreen() {
         )
       }} />
       <ThemedView style={styles.grid}>
-        <ThemedView style={styles.header}>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 37 }]}>Profile</Text>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Anggota Koperasi Karyawan</Text>
-        </ThemedView>
+        <Header
+          title={`Profile`}
+          subtitle="Anggota Koperasi Karyawan"
+        />
         <ThemedView style={styles.row}>
           <Text style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter, { fontSize: 20 }]}>Nama:</Text>
         </ThemedView>
@@ -162,14 +161,6 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 20,
-    paddingTop: 20,
-  },
   grid: {
     flex: 1,
     justifyContent: 'center',
