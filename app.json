@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#fff"
-      }
+      },
+      "package": "com.ridwan.kopkar"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cb9f223d-728e-4996-9c60-2463c77da6d2"
+      }
+    },
+    "owner": "virdiggg"
   }
 }
