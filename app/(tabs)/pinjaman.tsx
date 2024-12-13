@@ -56,7 +56,7 @@ export default function PinjamanScreen() {
       let param = JSON.stringify({
         'simpanan_sukarela': simpananPokok
       })
-      const response = await fetchWithRetry(`trx/deposit`, {
+      const response = await fetchWithRetry(`trx/loan`, {
         method: "POST",
         body: param,
       });

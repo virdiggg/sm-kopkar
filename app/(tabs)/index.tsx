@@ -119,7 +119,7 @@ export default function HomeScreen() {
               style={[styles.button, glStyles.itemCenter]}
             >
               <Image
-                source={require('@/assets/images/bayar.png')}
+                source={require('@/assets/images/pinjaman.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
               <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Pinjaman</ThemedText>
@@ -134,7 +134,7 @@ export default function HomeScreen() {
               style={[styles.button, glStyles.itemCenter]}
             >
               <Image
-                source={require('@/assets/images/simpan.png')}
+                source={require('@/assets/images/simpanan.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
               <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Simpanan</ThemedText>

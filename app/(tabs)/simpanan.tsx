@@ -96,7 +96,7 @@ export default function SimpananScreen() {
         <ThemedView style={styles.header}>
           <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
               <Image
-                source={require('@/assets/images/history.png')}
+                source={require('@/assets/images/simpanan.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
         </ThemedView>
