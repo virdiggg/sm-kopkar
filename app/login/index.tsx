@@ -12,9 +12,8 @@ const { width, height } = Dimensions.get("window"); // Get screen dimensions
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
-  const [errors, setErrors] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isSubmit, setIsSubmit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -27,19 +26,33 @@ export default function LoginScreen() {
   };
 
   useEffect(() => {
+    setErrorMsg('');
+    setUsername('');
+    setPassword('');
+    setIsSubmit(false);
+    setShowPassword(false);
+
     checkIfSignedIn();
+
+    return () => {
+      setErrorMsg('');
+      setUsername('');
+      setPassword('');
+      setIsSubmit(false);
+      setShowPassword(false);
+    };
   }, []);
 
   const handleLogin = async () => {
-    setIsLoading(true);
-    setErrors('');
+    setIsSubmit(true);
+    setErrorMsg('');
     Keyboard.dismiss();
 
     let user = username.trim();
     let pass = password.trim();
     if (user.length === 0 || pass.length === 0) {
-      setIsLoading(false);
-      setErrors("Username and password cannot be empty");
+      setIsSubmit(false);
+      setErrorMsg("Username and password cannot be empty");
       return;
     }
 
@@ -52,7 +65,7 @@ export default function LoginScreen() {
       });
 
       if (response && response.statusCode !== 200) {
-        setErrors(response.message);
+        setErrorMsg(response.message);
         return;
       }
 
@@ -63,9 +76,9 @@ export default function LoginScreen() {
       return;
     } catch (error: any) {
       // console.log("Error:", error);
-      // setErrors(error);
+      // setErrorMsg(error);
     } finally {
-      setIsLoading(false);
+      setIsSubmit(false);
     }
   };
 
@@ -84,7 +97,7 @@ export default function LoginScreen() {
             onChangeText={setUsername}
             keyboardType="default"
             style={glStyles.input}
-            disabled={isLoading}
+            disabled={isSubmit}
             autoCapitalize='none'
             right={<TextInput.Icon icon="email" />}
           />
@@ -94,7 +107,7 @@ export default function LoginScreen() {
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
             style={glStyles.input}
-            disabled={isLoading}
+            disabled={isSubmit}
             autoCapitalize='none'
             right={
               <TextInput.Icon
@@ -103,9 +116,9 @@ export default function LoginScreen() {
               />
             }
           />
-          <Text style={glStyles.textDanger}>{errors}</Text>
-          <Button mode="contained" onPress={handleLogin} disabled={isLoading} style={glStyles.button}>
-            {isLoading ? (
+          <Text style={glStyles.textDanger}>{errorMsg}</Text>
+          <Button mode="contained" onPress={handleLogin} disabled={isSubmit} style={glStyles.button}>
+            {isSubmit ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={glStyles.buttonText}>Login</Text>
