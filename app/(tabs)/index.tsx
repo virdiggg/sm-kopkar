@@ -34,6 +34,9 @@ export default function HomeScreen() {
         // Refresh token jadi gak expired
         const response = await fetchWithRetry(`auth/verify`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         // Kalo bukan 200 berarti token invalid,

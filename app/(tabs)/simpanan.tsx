@@ -14,7 +14,9 @@ import { router } from 'expo-router';
 import { useRouter, Stack } from "expo-router";
 import { isSignedIn } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
+import { processUri, getMimeType } from "@/services/images";
 import { styles as glStyles } from "@/assets/styles";
+import * as ImagePicker from 'expo-image-picker';
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
@@ -23,7 +25,9 @@ export default function SimpananScreen() {
   const [errorMsg, setErrorMsg] = useState('');
   const [simpananPokok, setSimpananPokok] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     setErrors({});
@@ -31,6 +35,7 @@ export default function SimpananScreen() {
     setSimpananPokok('');
     setIsLoading(false);
     setIsSubmit(false);
+    setSelectedImage(null);
 
     const checkIfSignedIn = async () => {
       setIsLoading(true);
@@ -52,8 +57,59 @@ export default function SimpananScreen() {
       setSimpananPokok('');
       setIsLoading(false);
       setIsSubmit(false);
+      setSelectedImage(null);
     };
   }, []);
+
+  useEffect(() => {
+    if (selectedImage) {
+      processUri(selectedImage).then((validUri) => {
+        setSelectedImage(validUri);
+      });
+    }
+  }, [selectedImage]);
+
+  // Function to request permissions and open image library
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== 'granted') {
+      showToast('Saya perlu izin untuk mengakses file manager.');
+      return;
+    }
+
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri); // Set selected image URI
+    }
+  };
+
+  // Function to request permissions and open camera
+  const openCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (status !== 'granted') {
+      showToast('Saya perlu izin untuk mengakses kamera.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri); // Set captured image URI
+    }
+  };
 
   const goBack = () => {
     router.back();
@@ -68,21 +124,35 @@ export default function SimpananScreen() {
     if (simpananPokok.length === 0) {
       setIsSubmit(false);
       setErrors({
-        simpanan_sukarela: 'Simpanan sukarela tidak boleh kosong',
+        simpanan_sukarela: 'Jumlah simpanan sukarela tidak boleh kosong',
       });
       return;
     }
 
+    if (!selectedImage) {
+      setIsSubmit(false);
+      setErrorMsg('Harus upload gambar');
+      return;
+    }
+
     try {
-      let param = JSON.stringify({
-        'simpanan_sukarela': simpananPokok
-      })
+      const mime = await getMimeType(selectedImage);
+
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append('simpanan_sukarela', simpananPokok);
+      formData.append('image', {
+        uri: selectedImage,
+        name: `photo_${Date.now()}.${mime.ext}`,
+        type: mime.mimeType,
+      });
+
       const response = await fetchWithRetry(`trx/deposit`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Accept": "application/json",
         },
-        body: param,
+        body: formData,
       });
 
       if (response && response.statusCode !== 200) {
@@ -91,6 +161,7 @@ export default function SimpananScreen() {
       } else {
         showToast(response.message);
         setSimpananPokok('');
+        setSelectedImage(null);
         setTimeout(() => {
           router.replace("/(tabs)");
         }, 2000);
@@ -135,7 +206,7 @@ export default function SimpananScreen() {
             style={[styles.logo, glStyles.imgFluid]}
           />
         </ThemedView>
-        <ThemedView style={[styles.row, { padding: 20 }]}>
+        <ThemedView style={[styles.row, { paddingTop: 20 }]}>
           <TextInput
             label="Simpanan Pokok (Rp)"
             value={simpananPokok}
@@ -149,10 +220,31 @@ export default function SimpananScreen() {
             textColor="#2e96b8"
             underlineColor="#2e96b8"
             activeUnderlineColor="#2e96b8"
+            onFocus={() => setKeyboardIsVisible(true)}
+            onBlur={() => setKeyboardIsVisible(false)}
           />
           {errors && errors.simpanan_sukarela && <HelperText type="error" style={glStyles.textDanger}>{errors.simpanan_sukarela}</HelperText>}
         </ThemedView>
-        <ThemedView style={[styles.row, { padding: 20 }]}>
+
+        {!keyboardIsVisible ? (<ThemedView style={[styles.row, glStyles.itemCenter]}>
+          <Button onPress={pickImage}>Pilih Gambar</Button>
+          <Button onPress={openCamera}>Ambil Foto</Button>
+          {selectedImage ? (
+            <Image
+              source={{ uri: selectedImage }}
+              style={[
+                styles.logo,
+                glStyles.imgFluid,
+                {
+                  resizeMode: "cover",
+                },
+              ]}
+            />
+          ) : (
+            <Text style={glStyles.buttonText}>Belum pilih gambar</Text>
+          )}
+        </ThemedView>) : null}
+        <ThemedView style={styles.row}>
           <Text style={glStyles.textDanger}>{errorMsg}</Text>
           <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
             {isSubmit ? (
@@ -185,12 +277,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     width: '100%',
+    paddingHorizontal: 20,
+    paddingBottom: 20
   },
   input: {
     width: "100%",
   },
   logo: {
-    width: width * 0.3, // 50% of screen width
+    width: "100%", // 50% of screen width
     height: height * 0.2, // 20% of screen height
   },
 });

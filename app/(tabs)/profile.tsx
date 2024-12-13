@@ -33,6 +33,9 @@ export default function ProfileScreen() {
         // Refresh token jadi gak expired
         const response = await fetchWithRetry(`user/my-profile`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         // Kalo bukan 200 berarti token invalid,

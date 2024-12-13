@@ -12,7 +12,6 @@ interface FetchOptions {
 const getAuthHeaders = async (options: FetchOptions) => {
     const signedIn = await isSignedIn();
     const headers: { [key: string]: string } = {
-        "Content-Type": "application/json",
         ...options.headers,
     };
 
