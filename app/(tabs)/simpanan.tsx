@@ -1,5 +1,13 @@
-import { StyleSheet, TouchableOpacity, Keyboard, Image,TouchableWithoutFeedback, Dimensions } from "react-native";
-import { Text, ActivityIndicator, Button, TextInput } from "react-native-paper";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  ToastAndroid,
+  Keyboard,
+  Image,
+  TouchableWithoutFeedback,
+  Dimensions
+} from "react-native";
+import { Text, ActivityIndicator, Button, TextInput, HelperText } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
 import { router } from 'expo-router';
@@ -11,13 +19,15 @@ import { styles as glStyles } from "@/assets/styles";
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 export default function SimpananScreen() {
-  const [errors, setErrors] = useState('');
+  const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
   const [simpananPokok, setSimpananPokok] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
-    setErrors('');
+    setErrors({});
+    setErrorMsg('');
     setSimpananPokok('');
     setIsLoading(false);
     setIsSubmit(false);
@@ -37,7 +47,8 @@ export default function SimpananScreen() {
     checkIfSignedIn();
 
     return () => {
-      setErrors('');
+      setErrors({});
+      setErrorMsg('');
       setSimpananPokok('');
       setIsLoading(false);
       setIsSubmit(false);
@@ -50,7 +61,17 @@ export default function SimpananScreen() {
 
   const handleSubmit = async () => {
     setIsSubmit(true);
-    setErrors('');
+    setErrorMsg('');
+    setErrors({});
+    Keyboard.dismiss();
+
+    if (simpananPokok.length === 0) {
+      setIsSubmit(false);
+      setErrors({
+        simpanan_sukarela: 'Simpanan sukarela tidak boleh kosong',
+      });
+      return;
+    }
 
     try {
       let param = JSON.stringify({
@@ -65,22 +86,27 @@ export default function SimpananScreen() {
       });
 
       if (response && response.statusCode !== 200) {
-        setErrors(response.message);
+        setErrorMsg(response.message);
+        return;
+      } else {
+        showToast(response.message);
+        setSimpananPokok('');
+        setTimeout(() => {
+          router.replace("/(tabs)");
+        }, 2000);
         return;
       }
-
-      setSimpananPokok('');
-      setTimeout(() => {
-        router.replace("/(tabs)");
-      }, 3000);
-      return;
-    } catch (error) {
+    } catch (error: any) {
       // console.log("Error:", error);
-      // setErrors(error);
+      // setErrorMsg(error);
     } finally {
       setIsSubmit(false);
     }
   }
+
+  const showToast = (message: string) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
 
   if (isLoading) {
     return (
@@ -124,9 +150,10 @@ export default function SimpananScreen() {
             underlineColor="#2e96b8"
             activeUnderlineColor="#2e96b8"
           />
+          {errors && errors.simpanan_sukarela && <HelperText type="error" style={glStyles.textDanger}>{errors.simpanan_sukarela}</HelperText>}
         </ThemedView>
         <ThemedView style={[styles.row, { padding: 20 }]}>
-          <Text style={glStyles.textDanger}>{errors}</Text>
+          <Text style={glStyles.textDanger}>{errorMsg}</Text>
           <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
             {isSubmit ? (
               <ActivityIndicator color="#fff" />

@@ -33,6 +33,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setIsLoading(true);
     setErrors('');
+    Keyboard.dismiss();
 
     let user = username.trim();
     let pass = password.trim();
