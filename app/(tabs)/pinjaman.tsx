@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Dimensions } from "react-native";
 import { Text, ActivityIndicator, Button, TextInput } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -8,15 +8,22 @@ import { isSignedIn } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
+const { width, height } = Dimensions.get("window"); // Get screen dimensions
+
 export default function PinjamanScreen() {
   const [errors, setErrors] = useState('');
   const [simpananPokok, setSimpananPokok] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setErrors('');
+    setSimpananPokok('');
+    setIsLoading(false);
+    setIsSubmit(false);
+
     const checkIfSignedIn = async () => {
-      setErrors('');
+      setIsLoading(true);
 
       const signedIn = await isSignedIn();
       if (!signedIn) {
@@ -28,6 +35,13 @@ export default function PinjamanScreen() {
     }
 
     checkIfSignedIn();
+
+    return () => {
+      setErrors('');
+      setSimpananPokok('');
+      setIsLoading(false);
+      setIsSubmit(false);
+    };
   }, []);
 
   const goBack = () => {
@@ -35,7 +49,7 @@ export default function PinjamanScreen() {
   }
 
   const handleSubmit = async () => {
-    setIsLoading(true);
+    setIsSubmit(true);
     setErrors('');
 
     try {
@@ -44,21 +58,21 @@ export default function PinjamanScreen() {
       })
       const response = await fetchWithRetry(`trx/deposit`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: param,
       });
 
-      if (response.ok) {
-        // router.replace("/(tabs)/profile");
-      } else {
+      if (response && response.statusCode !== 200) {
         setErrors(response.message);
+        return;
       }
-    } catch (error) {
-      // setErrors(error.message);
+
+      router.replace("/(tabs)");
+      return;
+    } catch (error: any) {
+      // console.log("Error:", error);
+      // setErrors(error);
     } finally {
-      setIsLoading(false);
+      setIsSubmit(false);
     }
   }
 
@@ -104,7 +118,7 @@ export default function PinjamanScreen() {
         <ThemedView style={[styles.row, { padding: 20 }]}>
           <Text style={glStyles.textDanger}>{errors}</Text>
           <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
-            {isLoading ? (
+            {isSubmit ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={glStyles.buttonText}>Simpan</Text>
@@ -137,5 +151,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
+  },
+  logo: {
+    width: width * 0.3, // 50% of screen width
+    height: height * 0.2, // 20% of screen height
   },
 });

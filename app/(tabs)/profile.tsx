@@ -16,9 +16,12 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setErrors('');
+    setUser('');
+    setIsLoading(false);
+
     const checkIfSignedIn = async () => {
-      setErrors('');
+      setIsLoading(true);
 
       const signedIn = await isSignedIn();
       if (!signedIn) {
@@ -55,6 +58,11 @@ export default function ProfileScreen() {
     };
 
     checkIfSignedIn();
+    return () => {
+      setErrors('');
+      setUser('');
+      setIsLoading(false);
+    };
   }, []);
 
   const goBack = () => {

@@ -19,15 +19,18 @@ export default function HomeScreen() {
   useEffect(() => {
     setIsLoading(true);
     const checkIfSignedIn = async () => {
-      setErrors('');
-
       const signedIn = await isSignedIn();
       if (!signedIn) {
         router.replace("/login");
         return;
       }
 
+      setErrors('');
+      setNama('');
+      setIsLoading(false);
+
       try {
+
         // Refresh token jadi gak expired
         const response = await fetchWithRetry(`auth/verify`, {
           method: "POST",
@@ -54,6 +57,12 @@ export default function HomeScreen() {
     };
 
     checkIfSignedIn();
+
+    return () => {
+      setErrors('');
+      setNama('');
+      setIsLoading(false);
+    };
   }, []);
 
   const goToHistory = () => {
