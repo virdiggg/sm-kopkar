@@ -1,7 +1,7 @@
 // import { Image, StyleSheet, Platform } from 'react-native';
 // import { HelloWave } from '@/components/HelloWave';
 // import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Text, ActivityIndicator, TextInput } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
@@ -61,7 +61,7 @@ export default function ProfileScreen() {
   }, []);
 
   const goBack = () => {
-    router.replace("/(tabs)/profile");
+    router.back();
 
   }
 
@@ -76,7 +76,14 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={glStyles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{
+        headerShown: true,
+        headerRight: () => (
+          <TouchableOpacity onPress={goBack}>
+            <Text style={[glStyles.buttonTextTheme, { paddingHorizontal: 10 }]}>Back</Text>
+          </TouchableOpacity>
+        )
+      }} />
       <ThemedView style={styles.grid}>
         <ThemedView style={styles.header}>
           <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 37 }]}>Profile</Text>
@@ -135,7 +142,7 @@ export default function ProfileScreen() {
         </ThemedView>
         <ThemedView style={styles.row}>
           <TextInput
-            value={user?.koperasi_id + user?.anggota_id }
+            value={user?.koperasi_id + user?.anggota_id}
             keyboardType="default"
             style={styles.input}
             disabled={true}
@@ -154,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingBottom: 20,
-    paddingTop: 120,
+    paddingTop: 20,
   },
   grid: {
     flex: 1,
