@@ -1,20 +1,17 @@
-// import { Image, StyleSheet, Platform } from 'react-native';
-// import { HelloWave } from '@/components/HelloWave';
-// import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { StyleSheet, Image, TouchableOpacity, Text, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, ActivityIndicator } from "react-native-paper";
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
 import { router } from 'expo-router';
 import { useRouter, Stack } from "expo-router";
-import { isSignedIn, getToken, signIn, signOut } from '@/services/auth';
+import { isSignedIn, signIn, signOut } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 export default function HomeScreen() {
-  const [token, setToken] = useState('');
   const [errors, setErrors] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [nama, setNama] = useState('');
@@ -30,8 +27,6 @@ export default function HomeScreen() {
 
       setErrors('');
 
-      const userToken = await getToken();
-      setToken(userToken);
       try {
         // Refresh token jadi gak expired
         const response = await fetchWithRetry(`auth/verify`, {
@@ -62,19 +57,23 @@ export default function HomeScreen() {
   }, []);
 
   const goToHistory = () => {
-    router.replace("/explore");
+    router.replace("/history");
+
   }
 
   const goToBayar = () => {
     router.replace("/bayar");
+
   }
 
   const goToSimpan = () => {
     router.replace("/simpan");
+
   }
 
   const goToProfile = () => {
-    router.replace("/profile");
+    router.replace("/(tabs)/profile");
+
   }
 
   if (isLoading) {
@@ -110,7 +109,7 @@ export default function HomeScreen() {
           </ThemedView>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToHistory}
+              onPress={goToBayar}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
@@ -125,7 +124,7 @@ export default function HomeScreen() {
         <ThemedView style={styles.row}>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToHistory}
+              onPress={goToSimpan}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
@@ -138,7 +137,7 @@ export default function HomeScreen() {
           </ThemedView>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToHistory}
+              onPress={goToProfile}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
