@@ -31,7 +31,6 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
           tabBarStyle: {
             display: "none",
           },
@@ -41,7 +40,6 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
           tabBarStyle: {
             display: "none",
           },
@@ -51,7 +49,6 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
           tabBarStyle: {
             display: "none",
           },
@@ -61,7 +58,6 @@ export default function TabLayout() {
         name="simpanan"
         options={{
           title: 'Simpanan',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
           tabBarStyle: {
             display: "none",
           },
@@ -71,7 +67,24 @@ export default function TabLayout() {
         name="pinjaman"
         options={{
           title: 'Pinjaman',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="history_pinjaman"
+        options={{
+          title: 'History Pinjaman',
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="history_simpanan"
+        options={{
+          title: 'History Simpanan',
           tabBarStyle: {
             display: "none",
           },
