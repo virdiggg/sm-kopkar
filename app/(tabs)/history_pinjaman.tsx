@@ -36,7 +36,7 @@ export default function HistoryPinjamanScreen() {
       return null;
     }
 
-    return response.data || "0"; // Assuming the total amount is in `response.total`
+    return response.data || "0";
   };
 
   const fetchApi = async (currentPage: number): Promise<{ data: any[]; nextDraw: number }> => {

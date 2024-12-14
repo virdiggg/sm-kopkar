@@ -12,7 +12,7 @@ import { styles as glStyles } from "@/assets/styles";
 const LIMIT = 10;
 const TYPE_HISTORY = "simpanan";
 
-export default function HistoryPinjamanScreen() {
+export default function HistorySimpananScreen() {
   const [totalAmount, setTotalAmount] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -22,7 +22,13 @@ export default function HistoryPinjamanScreen() {
 
   const fetchTotalAmount = async (): Promise<string | null> => {
     const response = await fetchWithRetry(`trx/total`, {
-      method: "GET",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: TYPE_HISTORY,
+      }),
     });
 
     if (response && response.statusCode !== 200) {
@@ -30,7 +36,7 @@ export default function HistoryPinjamanScreen() {
       return null;
     }
 
-    return response.total || "0"; // Assuming the total amount is in `response.total`
+    return response.data || "0";
   };
 
   const fetchApi = async (currentPage: number): Promise<{ data: any[]; nextDraw: number }> => {
@@ -94,15 +100,15 @@ export default function HistoryPinjamanScreen() {
       {/* Header Component */}
       <Header
         title="History"
-        description="Riwayat simpan pinjam Koperasi Karyawan Pasar Rebo"
+        description="Simpanan"
         customStyles={{ marginBottom: 20 }}
       />
 
       {/* Total Amount Component */}
-      <TotalAmount total={totalAmount || "Loading..."} customStyles={{ marginBottom: 20 }} />
+      <TotalAmount total={totalAmount || "Loading..."} description="Total Simpanan" customStyles={{ marginBottom: 20 }} />
 
       {/* Table Content Component */}
-      <TableContent fetchApi={fetchApi} customStyles={{ paddingBottom: 50 }} />
+      <TableContent fetchApi={fetchApi} limit={LIMIT} customStyles={{ paddingBottom: 50 }} />
 
       {/* Optional Error Message */}
       {errorMsg && (
