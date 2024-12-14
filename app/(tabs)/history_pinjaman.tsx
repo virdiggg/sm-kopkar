@@ -1,208 +1,89 @@
-import { StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { Text, ActivityIndicator, TextInput } from "react-native-paper";
+import React, { useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { Stack, router } from "expo-router";
+import { Text } from "react-native-paper";
 import { ThemedView } from "@/components/ThemedView";
-import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
-import { useRouter, Stack } from "expo-router";
-import { isSignedIn, signOut } from "@/services/auth";
+import Header from "@/components/histories/Header";
+import TotalAmount from "@/components/histories/TotalAmount";
+import TableContent from "@/components/histories/TableContent";
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
-import Header from "@/components/Header";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const LIMIT = 10; // Maximum items per page
+const TYPE_HISTORY = "pinjaman"; // Example type
 
 export default function HistoryPinjamanScreen() {
-    const [errors, setErrors] = useState({});
-    const [errorMsg, setErrorMsg] = useState('');
-    const [user, setUser] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    useEffect(() => {
-        setErrors({});
-        // setErrorMsg("");
-        // setJumlahPinjaman("");
-        // setLamaAngsuran("");
-        // setIsSubmit(false);
+  // Handle "Back" action
+  const goBack = () => {
+    router.back();
+  };
 
-        setIsLoading(true);
+  // API fetch function for TableContent
+  const fetchApi = async (currentPage: number): Promise<{ data: any[]; nextDraw: number }> => {
+    const response = await fetchWithRetry(`trx/histories`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        start: currentPage,
+        nextDraw: LIMIT,
+        type: TYPE_HISTORY,
+      }),
+    });
 
-        const checkIfSignedIn = async () => {
-            const signedIn = await isSignedIn();
-            if (!signedIn) {
-                router.replace("/login");
-                return;
-            }
-
-            setIsLoading(false);
-        };
-
-        checkIfSignedIn();
-
-        return () => {
-            setErrors({});
-            //   setErrorMsg('');
-            //   setJumlahPinjaman('');
-            //   setLamaAngsuran('');
-            //   setIsLoading(false);
-            //   setIsSubmit(false);
-        };
-    }, []);
-
-    const goBack = () => {
-        router.back();
-    };
-
-    if (isLoading) {
-        return (
-            <ThemedView style={[glStyles.container, glStyles.itemCenter]}>
-                <Stack.Screen options={{ headerShown: false }} />
-                <ActivityIndicator color="#2e96b8" size="large" />
-            </ThemedView>
-        );
+    if (response && response.statusCode !== 200) {
+      setErrorMsg(response.message);
+      return {
+        data: [],
+        nextDraw: 0,
+      };
     }
 
-    return (
-        <ThemedView style={glStyles.container}>
-            <Stack.Screen
-                options={{
-                    headerShown: true,
-                    headerRight: () => (
-                        <TouchableOpacity onPress={goBack}>
-                            <Text
-                                style={[glStyles.buttonTextTheme, { paddingHorizontal: 10 }]}
-                            >
-                                Back
-                            </Text>
-                        </TouchableOpacity>
-                    ),
-                }}
-            />
-            <ThemedView style={styles.grid}>
-                <Header title={`Profile`} subtitle="Anggota Koperasi Karyawan" />
-                <ThemedView style={styles.row}>
-                    <Text
-                        style={[
-                            glStyles.buttonTextTheme,
-                            glStyles.textBold,
-                            glStyles.textCenter,
-                            { fontSize: 20 },
-                        ]}
-                    >
-                        Nama:
-                    </Text>
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <TextInput
-                        value={user?.nama}
-                        keyboardType="default"
-                        style={styles.input}
-                        disabled={true}
-                        autoCapitalize="none"
-                    />
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <Text
-                        style={[
-                            glStyles.buttonTextTheme,
-                            glStyles.textBold,
-                            glStyles.textCenter,
-                            { fontSize: 20 },
-                        ]}
-                    >
-                        Kode Toko:
-                    </Text>
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <TextInput
-                        value={user?.koperasi_id}
-                        keyboardType="default"
-                        style={styles.input}
-                        disabled={true}
-                        autoCapitalize="none"
-                    />
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <Text
-                        style={[
-                            glStyles.buttonTextTheme,
-                            glStyles.textBold,
-                            glStyles.textCenter,
-                            { fontSize: 20 },
-                        ]}
-                    >
-                        Nama Bank:
-                    </Text>
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <TextInput
-                        value={user?.bank}
-                        keyboardType="default"
-                        style={styles.input}
-                        disabled={true}
-                        autoCapitalize="none"
-                    />
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <Text
-                        style={[
-                            glStyles.buttonTextTheme,
-                            glStyles.textBold,
-                            glStyles.textCenter,
-                            { fontSize: 20 },
-                        ]}
-                    >
-                        No. Rekening:
-                    </Text>
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <TextInput
-                        value={user?.no_rek}
-                        keyboardType="default"
-                        style={styles.input}
-                        disabled={true}
-                        autoCapitalize="none"
-                    />
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <Text
-                        style={[
-                            glStyles.buttonTextTheme,
-                            glStyles.textBold,
-                            glStyles.textCenter,
-                            { fontSize: 20 },
-                        ]}
-                    >
-                        ID Koperasi:
-                    </Text>
-                </ThemedView>
-                <ThemedView style={styles.row}>
-                    <TextInput
-                        value={user?.koperasi_id + user?.anggota_id}
-                        keyboardType="default"
-                        style={styles.input}
-                        disabled={true}
-                        autoCapitalize="none"
-                    />
-                </ThemedView>
-            </ThemedView>
-        </ThemedView>
-    );
-}
+    return {
+      data: response.data || [],
+      nextDraw: response.nextDraw || 0,
+    };
+  };
 
-const styles = StyleSheet.create({
-    grid: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    row: {
-        flex: 1,
-        flexDirection: "row",
-        backgroundColor: "#fff",
-        width: "100%",
-        paddingHorizontal: width * 0.05,
-    },
-    input: {
-        width: "100%",
-    },
-});
+  return (
+    <ThemedView style={glStyles.container}>
+      {/* Stack Header */}
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity onPress={goBack}>
+              <Text style={[glStyles.buttonTextTheme, { paddingHorizontal: 10 }]}>Back</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      {/* Header Component */}
+      <Header
+        title="History"
+        description="Riwayat simpan pinjam Koperasi Karyawan Pasar Rebo"
+        customStyles={{ marginBottom: 20 }}
+      />
+
+      {/* Total Amount Component */}
+      <TotalAmount
+        total={"1500000"} // Use dynamic variable for total amount
+        customStyles={{ marginBottom: 20 }}
+      />
+
+      {/* Table Content Component */}
+      <TableContent fetchApi={fetchApi} customStyles={{ paddingBottom: 50 }} />
+
+      {/* Optional Error Message */}
+      {errorMsg && (
+        <Text style={[glStyles.textDanger, { textAlign: "center", marginTop: 10 }]}>
+          {errorMsg}
+        </Text>
+      )}
+    </ThemedView>
+  );
+}
