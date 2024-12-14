@@ -113,6 +113,13 @@ export default function SimpananScreen() {
     router.back();
   }
 
+  const handleJumlahPinjam = (text: string) => {
+    if (parseInt(text) < 0) {
+      text = '0';
+    }
+    setSimpananPokok(text);
+  }
+
   const handleSubmit = async () => {
     setIsSubmit(true);
     setErrorMsg('');
@@ -208,7 +215,7 @@ export default function SimpananScreen() {
           <TextInput
             label="Simpanan Pokok (Rp)"
             value={simpananPokok}
-            onChangeText={setSimpananPokok}
+            onChangeText={handleJumlahPinjam}
             keyboardType="numeric"
             style={glStyles.input}
             disabled={isLoading}

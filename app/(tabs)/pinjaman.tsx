@@ -5,7 +5,9 @@ import {
   Keyboard,
   Image,
   TouchableWithoutFeedback,
-  Dimensions
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { Text, ActivityIndicator, Button, TextInput, HelperText } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
@@ -27,13 +29,13 @@ export default function PinjamanScreen() {
   const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
+
     setErrors({});
     setErrorMsg('');
     setJumlahPinjaman('');
     setLamaAngsuran('');
     setIsSubmit(false);
-
-    setIsLoading(true);
 
     const checkIfSignedIn = async () => {
       const signedIn = await isSignedIn();
@@ -139,71 +141,76 @@ export default function PinjamanScreen() {
   }
 
   return (
-    <TouchableWithoutFeedback style={glStyles.container} onPress={Keyboard.dismiss}>
-      <ThemedView style={styles.grid}>
-        <Stack.Screen options={{
-          headerShown: true,
-          headerRight: () => (
-            <TouchableOpacity onPress={goBack}>
-              <Text style={[glStyles.buttonTextTheme, { paddingHorizontal: 10 }]}>Back</Text>
-            </TouchableOpacity>
-          )
-        }} />
-        <ThemedView style={styles.header}>
-          <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
-          <Image
-            source={require('@/assets/images/pinjaman.png')}
-            style={[styles.logo, glStyles.imgFluid]}
-          />
+    <KeyboardAvoidingView
+      style={glStyles.container}
+      behavior={Platform.OS === "ios" ? "padding" : 'height'}
+    >
+      <TouchableWithoutFeedback style={glStyles.container} onPress={Keyboard.dismiss}>
+        <ThemedView style={styles.grid}>
+          <Stack.Screen options={{
+            headerShown: true,
+            headerRight: () => (
+              <TouchableOpacity onPress={goBack}>
+                <Text style={[glStyles.buttonTextTheme, { paddingHorizontal: 10 }]}>Back</Text>
+              </TouchableOpacity>
+            )
+          }} />
+          <ThemedView style={styles.header}>
+            <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
+            <Image
+              source={require('@/assets/images/pinjaman.png')}
+              style={[styles.logo, glStyles.imgFluid]}
+            />
+          </ThemedView>
+          <ThemedView style={[styles.row, { padding: 20 }]}>
+            <TextInput
+              label="Jumlah (Max Rp. 15.000.000)"
+              value={jumlahPinjaman}
+              onChangeText={handleJumlahPinjam}
+              keyboardType="numeric"
+              style={glStyles.input}
+              disabled={isLoading}
+              mode="outlined"
+              autoComplete="off"
+              outlineColor="#2e96b8"
+              textColor="#2e96b8"
+              underlineColor="#2e96b8"
+              activeUnderlineColor="#2e96b8"
+              enterKeyHint="next"
+            />
+            {errors && errors.jumlah_pinjaman && <HelperText type="error" style={glStyles.textDanger}>{errors.jumlah_pinjaman}</HelperText>}
+          </ThemedView>
+          <ThemedView style={[styles.row, { padding: 20 }]}>
+            <TextInput
+              label="Lama Angsuran (Bulan)"
+              value={lamaAngsuran}
+              onChangeText={setLamaAngsuran}
+              keyboardType="numeric"
+              style={glStyles.input}
+              disabled={isLoading}
+              mode="outlined"
+              autoComplete="off"
+              outlineColor="#2e96b8"
+              textColor="#2e96b8"
+              underlineColor="#2e96b8"
+              activeUnderlineColor="#2e96b8"
+              enterKeyHint="enter"
+            />
+            {errors && errors.lama_angsuran && <HelperText type="error" style={glStyles.textDanger}>{errors.lama_angsuran}</HelperText>}
+          </ThemedView>
+          <ThemedView style={[styles.row, { padding: 20 }]}>
+            <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>
+            <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
+              {isSubmit ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={glStyles.buttonText}>Pinjam</Text>
+              )}
+            </Button>
+          </ThemedView>
         </ThemedView>
-        <ThemedView style={[styles.row, { padding: 20 }]}>
-          <TextInput
-            label="Jumlah (Max Rp. 15.000.000)"
-            value={jumlahPinjaman}
-            onChangeText={handleJumlahPinjam}
-            keyboardType="numeric"
-            style={glStyles.input}
-            disabled={isLoading}
-            mode="outlined"
-            autoComplete="off"
-            outlineColor="#2e96b8"
-            textColor="#2e96b8"
-            underlineColor="#2e96b8"
-            activeUnderlineColor="#2e96b8"
-            enterKeyHint="next"
-          />
-          {errors && errors.jumlah_pinjaman && <HelperText type="error" style={glStyles.textDanger}>{errors.jumlah_pinjaman}</HelperText>}
-        </ThemedView>
-        <ThemedView style={[styles.row, { padding: 20 }]}>
-          <TextInput
-            label="Lama Angsuran (Bulan)"
-            value={lamaAngsuran}
-            onChangeText={setLamaAngsuran}
-            keyboardType="numeric"
-            style={glStyles.input}
-            disabled={isLoading}
-            mode="outlined"
-            autoComplete="off"
-            outlineColor="#2e96b8"
-            textColor="#2e96b8"
-            underlineColor="#2e96b8"
-            activeUnderlineColor="#2e96b8"
-            enterKeyHint="enter"
-          />
-          {errors && errors.lama_angsuran && <HelperText type="error" style={glStyles.textDanger}>{errors.lama_angsuran}</HelperText>}
-        </ThemedView>
-        <ThemedView style={[styles.row, { padding: 20 }]}>
-        <Text style={[glStyles.textDanger, glStyles.textCenter]}>{errorMsg}</Text>
-          <Button mode="contained" onPress={handleSubmit} disabled={isLoading} style={glStyles.button}>
-            {isSubmit ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={glStyles.buttonText}>Pinjam</Text>
-            )}
-          </Button>
-        </ThemedView>
-      </ThemedView>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
