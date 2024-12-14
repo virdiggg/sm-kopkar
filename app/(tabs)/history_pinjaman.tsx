@@ -9,8 +9,8 @@ import TableContent from "@/components/histories/TableContent";
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
-const LIMIT = 10; // Maximum items per page
-const TYPE_HISTORY = "loan-history"; // Example type
+const LIMIT = 10;
+const TYPE_HISTORY = "pinjaman";
 
 export default function HistoryPinjamanScreen() {
   const [totalAmount, setTotalAmount] = useState<string | null>(null);

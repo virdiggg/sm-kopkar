@@ -1,6 +1,8 @@
 import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
+import { styles as glStyles } from "@/assets/styles";
+
 interface InputProps {
   total: string;
   description: string;
@@ -9,22 +11,19 @@ interface InputProps {
 
 const TotalAmount = ({ total, description, customStyles = {} }: InputProps) => {
   return (
-    <ThemedView style={[styles.totalAmount, customStyles]}>
-      <Text style={styles.text}>{description}: Rp {total}</Text>
+    <ThemedView style={[styles.container, customStyles]}>
+      <Text style={[glStyles.buttonTextTheme, styles.subtitle]}>{description}: Rp {total}</Text>
     </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
-  totalAmount: {
+  container: {
     padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    backgroundColor: "#fff",
   },
-  text: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
+  subtitle: {
+    fontSize: 20,
   },
 });
 
