@@ -12,7 +12,8 @@ interface InputProps {
 const TotalAmount = ({ total, description, customStyles = {} }: InputProps) => {
   return (
     <ThemedView style={[styles.container, customStyles]}>
-      <Text style={[glStyles.buttonTextTheme, styles.subtitle]}>{description}: Rp {total}</Text>
+      <Text style={[glStyles.buttonTextTheme, styles.subtitle]}>{description}:</Text>
+      <Text style={styles.title}>Rp {total}</Text>
     </ThemedView>
   );
 };
@@ -21,6 +22,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: "#fff",
+  },
+  title: {
+    fontSize: 27,
   },
   subtitle: {
     fontSize: 20,

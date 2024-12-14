@@ -7,6 +7,7 @@ import {
   StyleSheet,
   RefreshControl,
 } from "react-native";
+import { styles as glStyles } from "@/assets/styles";
 
 interface FetchApi {
   (currentPage: number): Promise<{ data: any[]; nextDraw: number }>;
@@ -39,10 +40,12 @@ const TableContent: React.FC<TableContentProps> = ({ fetchApi, limit, customStyl
       const pageToFetch = reset ? 0 : currentPage;
       const result = await fetchApi(pageToFetch);
 
+      let isLast = nextDraw == result.nextDraw;
+
       // Update data
       setData((prevData) => (reset ? result.data : [...prevData, ...result.data]));
-      setNextDraw(result.nextDraw);
-      setHasMore((result.nextDraw % limit) > 0);
+      setNextDraw(isLast ? 0 : result.nextDraw);
+      setHasMore(isLast ? false : (result.nextDraw % limit) === 0);
 
       // Increment the current page only if fetching is successful
       if (!reset) setCurrentPage((prevPage) => prevPage + 1);
@@ -74,11 +77,12 @@ const TableContent: React.FC<TableContentProps> = ({ fetchApi, limit, customStyl
 
   // Render item in FlatList
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.itemRow}>
-      <Text>{item.no_transaksi}</Text>
-      <Text>{item.jumlah}</Text>
-      <Text>{item.tanggal}</Text>
-      {item.status.length > 0 && <Text>{item.status}</Text>}
+    <View style={styles.row}>
+      <Text style={styles.column}>{item.no}</Text>
+      <Text style={styles.column}>{item.no_transaksi}</Text>
+      <Text style={styles.column}>{item.jumlah}</Text>
+      <Text style={styles.column}>{item.tanggal}</Text>
+      {item.status.length > 0 && <Text style={styles.column}>{item.status}</Text>}
     </View>
   );
 
@@ -117,12 +121,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    textAlign: 'left',
   },
   infoText: {
     textAlign: "center",
     marginVertical: 10,
     fontSize: 14,
     color: "#666",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 9,
+  },
+  column: {
+    flex: 1,
+    textAlign: "left",
   },
 });
 
