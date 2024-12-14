@@ -3,13 +3,14 @@ import { Text, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 interface InputProps {
   total: string;
+  description: string;
   customStyles?: object;
 }
 
-const TotalAmount = ({ total, customStyles = {} }: InputProps) => {
+const TotalAmount = ({ total, description, customStyles = {} }: InputProps) => {
   return (
     <ThemedView style={[styles.totalAmount, customStyles]}>
-      <Text style={styles.text}>Total Amount: Rp {total}</Text>
+      <Text style={styles.text}>{description}: Rp {total}</Text>
     </ThemedView>
   );
 };

@@ -14,10 +14,11 @@ interface FetchApi {
 
 interface TableContentProps {
   fetchApi: FetchApi;
+  limit: number;
   customStyles?: any;
 }
 
-const TableContent: React.FC<TableContentProps> = ({ fetchApi, customStyles = {} }) => {
+const TableContent: React.FC<TableContentProps> = ({ fetchApi, limit, customStyles = {} }) => {
   const [data, setData] = useState<any[]>([]); // Loaded data
   const [currentPage, setCurrentPage] = useState(0); // Tracks the current page
   const [nextDraw, setNextDraw] = useState(10); // Items remaining to draw
@@ -41,7 +42,7 @@ const TableContent: React.FC<TableContentProps> = ({ fetchApi, customStyles = {}
       // Update data
       setData((prevData) => (reset ? result.data : [...prevData, ...result.data]));
       setNextDraw(result.nextDraw);
-      setHasMore(result.nextDraw > 0);
+      setHasMore((result.nextDraw % limit) > 0);
 
       // Increment the current page only if fetching is successful
       if (!reset) setCurrentPage((prevPage) => prevPage + 1);
@@ -74,8 +75,10 @@ const TableContent: React.FC<TableContentProps> = ({ fetchApi, customStyles = {}
   // Render item in FlatList
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.itemRow}>
-      <Text>{item.name}</Text>
-      <Text>{item.value}</Text>
+      <Text>{item.no_transaksi}</Text>
+      <Text>{item.jumlah}</Text>
+      <Text>{item.tanggal}</Text>
+      {item.status.length > 0 && <Text>{item.status}</Text>}
     </View>
   );
 
@@ -91,7 +94,7 @@ const TableContent: React.FC<TableContentProps> = ({ fetchApi, customStyles = {}
           <>
             {isLoadingMore && <ActivityIndicator size="small" color="#000" />}
             {nextDraw < 10 && (
-              <Text style={styles.infoText}>This is the last page.</Text>
+              <Text style={styles.infoText}>No more data to load.</Text>
             )}
           </>
         }

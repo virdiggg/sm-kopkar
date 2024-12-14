@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Stack, router } from "expo-router";
 import { Text } from "react-native-paper";
@@ -10,17 +10,35 @@ import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
 const LIMIT = 10; // Maximum items per page
-const TYPE_HISTORY = "pinjaman"; // Example type
+const TYPE_HISTORY = "loan-history"; // Example type
 
 export default function HistoryPinjamanScreen() {
+  const [totalAmount, setTotalAmount] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Handle "Back" action
   const goBack = () => {
     router.back();
   };
 
-  // API fetch function for TableContent
+  const fetchTotalAmount = async (): Promise<string | null> => {
+    const response = await fetchWithRetry(`trx/total`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: TYPE_HISTORY,
+      }),
+    });
+
+    if (response && response.statusCode !== 200) {
+      setErrorMsg(response.message);
+      return null;
+    }
+
+    return response.data || "0"; // Assuming the total amount is in `response.total`
+  };
+
   const fetchApi = async (currentPage: number): Promise<{ data: any[]; nextDraw: number }> => {
     const response = await fetchWithRetry(`trx/histories`, {
       method: "POST",
@@ -48,6 +66,23 @@ export default function HistoryPinjamanScreen() {
     };
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [total, initialTableData] = await Promise.all([
+          fetchTotalAmount(),
+          fetchApi(0),
+        ]);
+
+        setTotalAmount(total);
+      } catch (error) {
+        setErrorMsg("Failed to fetch data");
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <ThemedView style={glStyles.container}>
       {/* Stack Header */}
@@ -65,18 +100,15 @@ export default function HistoryPinjamanScreen() {
       {/* Header Component */}
       <Header
         title="History"
-        description="Riwayat simpan pinjam Koperasi Karyawan Pasar Rebo"
+        description="Pinjaman"
         customStyles={{ marginBottom: 20 }}
       />
 
       {/* Total Amount Component */}
-      <TotalAmount
-        total={"1500000"} // Use dynamic variable for total amount
-        customStyles={{ marginBottom: 20 }}
-      />
+      <TotalAmount total={totalAmount || "Loading..."} description="Total Pinjaman" customStyles={{ marginBottom: 20 }} />
 
       {/* Table Content Component */}
-      <TableContent fetchApi={fetchApi} customStyles={{ paddingBottom: 50 }} />
+      <TableContent fetchApi={fetchApi} limit={LIMIT} customStyles={{ paddingBottom: 50 }} />
 
       {/* Optional Error Message */}
       {errorMsg && (
