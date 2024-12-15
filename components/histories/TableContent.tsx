@@ -10,124 +10,109 @@ import {
 import { styles as glStyles } from "@/assets/styles";
 
 interface FetchApi {
-  (currentPage: number): Promise<{ data: any[]; nextDraw: number }>;
+  (start: number): Promise<{ data: any[]; next: number }>;
 }
 
 interface TableContentProps {
   fetchApi: FetchApi;
-  limit: number;
+  next: number; // Start index for the next API call
   customStyles?: any;
 }
 
-const TableContent: React.FC<TableContentProps> = ({ fetchApi, limit, customStyles = {} }) => {
-  const [data, setData] = useState<any[]>([]); // Loaded data
-  const [currentPage, setCurrentPage] = useState(0); // Tracks the current page
-  const [nextDraw, setNextDraw] = useState(10); // Items remaining to draw
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true); // Indicates if more data exists
+const TableContent: React.FC<TableContentProps> = ({
+  fetchApi,
+  next: initialNext,
+  customStyles = {},
+}) => {
+  const [data, setData] = useState<any[]>([]); // Stores the list of items
+  const [next, setNext] = useState<number>(initialNext); // Tracks the next index to load
+  const [isRefreshing, setIsRefreshing] = useState(false); // Pull-to-refresh state
+  const [isLoadingMore, setIsLoadingMore] = useState(false); // Infinite scroll state
+  const [hasMore, setHasMore] = useState(true); // If more data exists to load
+  const [isLoading, setIsLoading] = useState(true); // Initial loading state
 
-  // Fetch data from API
+  // Fetch and load data (reset = true for refreshing)
   const loadData = async (reset = false) => {
     try {
-      if (reset) {
-        setCurrentPage(0);
-        setNextDraw(10);
-        setHasMore(true);
-        setData([]);
-      }
+      const start = reset ? 0 : next; // Start from 0 if resetting
+      const result = await fetchApi(start);
 
-      const pageToFetch = reset ? 0 : currentPage;
-      const result = await fetchApi(pageToFetch);
-
-      let isLast = nextDraw == result.nextDraw;
-
-      // Update data
+      // Resetting or appending data
       setData((prevData) => (reset ? result.data : [...prevData, ...result.data]));
-      setNextDraw(isLast ? 0 : result.nextDraw);
-      setHasMore(isLast ? false : (result.nextDraw % limit) === 0);
 
-      // Increment the current page only if fetching is successful
-      if (!reset) setCurrentPage((prevPage) => prevPage + 1);
+      // Update next index and determine if more data exists
+      setNext(result.next);
+      setHasMore(result.next > 0);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false); // Stop the loading spinner
     }
   };
 
-  // Refresh handler
+  // Handle pull-to-refresh
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await loadData(true); // Reset to initial data
     setIsRefreshing(false);
   };
 
-  // Load more handler
+  // Handle infinite scrolling
   const handleLoadMore = async () => {
     if (!hasMore || isLoadingMore) return;
+
+    if (next % 10 !== 0) return;
 
     setIsLoadingMore(true);
     await loadData();
     setIsLoadingMore(false);
   };
 
-  // Initial data load
+  // Initial data load (only runs once on mount)
   useEffect(() => {
     loadData();
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once
 
-  // Render item in FlatList
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.row}>
       <Text style={styles.column}>{item.no}</Text>
       <Text style={styles.column}>{item.no_transaksi}</Text>
       <Text style={styles.column}>{item.jumlah}</Text>
       <Text style={styles.column}>{item.tanggal}</Text>
-      {item.status.length > 0 && <Text style={styles.column}>{item.status}</Text>}
+      {item.status?.length > 0 && <Text style={styles.column}>{item.status}</Text>}
     </View>
   );
 
+  // If still loading on initial load
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#000" />;
+  }
+
   return (
-    <>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={
-          <>
-            {isLoadingMore && <ActivityIndicator size="small" color="#000" />}
-            {nextDraw < 10 && (
-              <Text style={styles.infoText}>No more data to load.</Text>
-            )}
-          </>
-        }
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-        contentContainerStyle={[styles.table, customStyles]}
-      />
-    </>
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => `${item.no_transaksi}-${index}`}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        hasMore ? (
+          isLoadingMore ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : null
+        ) : (
+          <Text style={styles.infoText}>No more data to load.</Text>
+        )
+      }
+      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
+      contentContainerStyle={[styles.table, customStyles]}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   table: {
     padding: 20,
-  },
-  itemRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    textAlign: 'left',
-  },
-  infoText: {
-    textAlign: "center",
-    marginVertical: 10,
-    fontSize: 14,
-    color: "#666",
   },
   row: {
     flexDirection: "row",
@@ -137,6 +122,12 @@ const styles = StyleSheet.create({
   column: {
     flex: 1,
     textAlign: "left",
+  },
+  infoText: {
+    textAlign: "center",
+    marginVertical: 10,
+    fontSize: 14,
+    color: "#666",
   },
 });
 

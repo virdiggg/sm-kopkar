@@ -5,7 +5,7 @@ import { Text } from "react-native-paper";
 import { ThemedView } from "@/components/ThemedView";
 import Header from "@/components/histories/Header";
 import TotalAmount from "@/components/histories/TotalAmount";
-import TableContent from "@/components/histories/TableContent"; // Adjusted to match updated logic
+import TableContent from "@/components/histories/TableContent";
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
@@ -14,7 +14,7 @@ const TYPE_HISTORY = "pinjaman";
 export default function HistoryPinjamanScreen() {
   const [totalAmount, setTotalAmount] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [initialNext, setInitialNext] = useState<number>(0); // Initial "next" value for TableContent
+  const [initialNext, setInitialNext] = useState<number>(0);
 
   const fetchTotalAmount = async (): Promise<string | null> => {
     try {
@@ -68,9 +68,8 @@ export default function HistoryPinjamanScreen() {
       const total = await fetchTotalAmount();
       setTotalAmount(total);
 
-      // Fetch initial data to determine the first "next"
       const initialData = await fetchApi(0);
-      setInitialNext(initialData.next); // Pass to TableContent as the initial "next" value
+      setInitialNext(initialData.next);
     };
 
     loadInitialData();
@@ -101,7 +100,6 @@ export default function HistoryPinjamanScreen() {
         customStyles={{ marginBottom: 20 }}
       />
 
-      {/* Pass fetchApi and initialNext to TableContent */}
       <TableContent fetchApi={fetchApi} next={initialNext} customStyles={{ paddingBottom: 50 }} />
 
       {errorMsg && (
