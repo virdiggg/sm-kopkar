@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "kopkar2",
-    "slug": "kopkar2",
-    "version": "1.0.0",
+    "name": "kopkar",
+    "slug": "kopkar",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "myapp",

@@ -37,7 +37,6 @@ const TableContent: React.FC<TableContentProps> = ({
       const start = reset ? 0 : next; // Start from 0 if resetting
       const result = await fetchApi(start);
 
-      console.log(result.data);
       if (result.data.length === 0) {
         setHasMore(false);
         return;
@@ -79,14 +78,37 @@ const TableContent: React.FC<TableContentProps> = ({
     loadData();
   }, []); // Empty dependency array ensures this runs only once
 
-  const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.row}>
-      <Text style={styles.column}>{item.no_transaksi}</Text>
-      <Text style={styles.column}>{item.jumlah}</Text>
-      <Text style={styles.column}>{item.tanggal}</Text>
-      {item.status?.length > 0 && <Text style={styles.column}>{item.status}</Text>}
-    </View>
-  );
+  const renderItem = ({ item }: { item: any }) => {
+    // Determine the status color based on item.status
+    let statusColor = 'gray'; // Default color
+    if (item.status === 'DISETUJUI') {
+      statusColor = 'green';
+    } else if (item.status === 'DITOLAK') {
+      statusColor = 'red';
+    }
+
+    return (
+      <View style={styles.wrapper}>
+        <View style={[styles.row]}>
+          <Text style={[styles.itemText, { alignItems: 'flex-start' }]}>
+            {item.no_transaksi} - {''}
+          </Text>
+          <Text style={[styles.itemText, { color: statusColor, alignItems: 'flex-end' }]}>
+            {item.status || 'MENUNGGU'}
+          </Text>
+        </View>
+        <View style={[styles.row, styles.between]}>
+          <Text style={[styles.amountText, { flex: 1, alignItems: 'flex-start' }]}>
+            {item.jumlah}
+          </Text>
+          <Text style={[styles.dateText, { flex: 1, textAlign: 'right', alignItems: 'flex-end' }]}>
+            {item.tanggal}
+          </Text>
+        </View>
+        <View style={styles.separator} />
+      </View>
+    );
+  };
 
   // If still loading on initial load
   if (isLoading) {
@@ -119,20 +141,41 @@ const styles = StyleSheet.create({
   table: {
     padding: 20,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 9,
+  wrapper: {
+    marginVertical: 10,
   },
-  column: {
+  row: {
     flex: 1,
-    textAlign: "left",
+    flexDirection: 'row',
+  },
+  between: {
+    justifyContent: 'space-between'
+  },
+  itemText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  amountText: {
+    fontSize: 16,
+    color: 'green',
+    marginBottom: 5,
+  },
+  dateText: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 5,
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginTop: 5,
   },
   infoText: {
-    textAlign: "center",
+    textAlign: 'center',
     marginVertical: 10,
     fontSize: 14,
-    color: "#666",
+    color: '#666',
   },
 });
 
