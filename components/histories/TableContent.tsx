@@ -81,7 +81,6 @@ const TableContent: React.FC<TableContentProps> = ({
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.row}>
-      <Text style={styles.column}>{item.no}</Text>
       <Text style={styles.column}>{item.no_transaksi}</Text>
       <Text style={styles.column}>{item.jumlah}</Text>
       <Text style={styles.column}>{item.tanggal}</Text>
