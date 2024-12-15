@@ -37,6 +37,12 @@ const TableContent: React.FC<TableContentProps> = ({
       const start = reset ? 0 : next; // Start from 0 if resetting
       const result = await fetchApi(start);
 
+      console.log(result.data);
+      if (result.data.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
       // Resetting or appending data
       setData((prevData) => (reset ? result.data : [...prevData, ...result.data]));
 

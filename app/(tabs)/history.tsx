@@ -43,11 +43,11 @@ export default function HistoryScreen() {
   }, []);
 
   const goToPinjaman = () => {
-    router.replace("/(tabs)/history_pinjaman");
+    router.push("/(tabs)/history_pinjaman");
   }
 
   const goToSimpanan = () => {
-    router.replace("/(tabs)/history_simpanan");
+    router.push("/(tabs)/history_simpanan");
   }
 
   const goBack = () => {
