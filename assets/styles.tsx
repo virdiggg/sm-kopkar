@@ -58,5 +58,8 @@ export const styles = StyleSheet.create({
     },
     textDanger: {
         color: '#ff0000',
-    }
+    },
+    textWarning: {
+        color: '#ffc107',
+    },
 });
