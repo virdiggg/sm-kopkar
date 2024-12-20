@@ -94,7 +94,7 @@ const TableContent: React.FC<TableContentProps> = ({
             {item.no_transaksi} - {''}
           </Text>
           <Text style={[styles.itemText, { color: statusColor, alignItems: 'flex-end' }]}>
-            {item.status || 'MENUNGGU'}
+            {item.status || ''}
           </Text>
         </View>
         <View style={[styles.row, styles.between]}>
