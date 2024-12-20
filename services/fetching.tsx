@@ -1,6 +1,6 @@
 import { isSignedIn, getToken } from '@/services/auth';
 const API_VERSION = "v1";
-const API_ENDPOINT = `https://befd-36-88-43-156.ngrok-free.app/kopkar/api/${API_VERSION}/`;
+const API_ENDPOINT = `https://calm-literally-beetle.ngrok-free.app/kopkar/api/${API_VERSION}/`;
 
 interface FetchOptions {
     headers?: { [key: string]: string };
