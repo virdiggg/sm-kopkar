@@ -9,7 +9,7 @@ import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 import Header from "@/components/Header";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 export default function ProfileScreen() {
   const [errors, setErrors] = useState('');

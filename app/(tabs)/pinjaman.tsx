@@ -18,7 +18,7 @@ import { isSignedIn } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { styles as glStyles } from "@/assets/styles";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 export default function PinjamanScreen() {
   const [errors, setErrors] = useState({});
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
-    width: width * 0.3, // 50% of screen width
-    height: height * 0.2, // 20% of screen height
+    width: width * 0.3,
+    height: height * 0.2,
   },
 });

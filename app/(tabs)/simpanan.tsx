@@ -18,7 +18,7 @@ import { processUri, getMimeType } from "@/services/images";
 import { styles as glStyles } from "@/assets/styles";
 import * as ImagePicker from 'expo-image-picker';
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 export default function SimpananScreen() {
   const [errors, setErrors] = useState({});
@@ -67,7 +67,6 @@ export default function SimpananScreen() {
     }
   }, [selectedImage]);
 
-  // Function to request permissions and open image library
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -76,7 +75,6 @@ export default function SimpananScreen() {
       return;
     }
 
-    // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
@@ -85,11 +83,10 @@ export default function SimpananScreen() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri); // Set selected image URI
+      setSelectedImage(result.assets[0].uri);
     }
   };
 
-  // Function to request permissions and open camera
   const openCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
@@ -105,7 +102,7 @@ export default function SimpananScreen() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri); // Set captured image URI
+      setSelectedImage(result.assets[0].uri);
     }
   };
 
@@ -143,7 +140,6 @@ export default function SimpananScreen() {
     try {
       const mime = await getMimeType(selectedImage);
 
-      // Create a FormData object
       const formData = new FormData();
       formData.append('simpanan_sukarela', simpananPokok);
       formData.append('bukti_transfer', {
@@ -289,7 +285,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logo: {
-    width: "100%", // 50% of screen width
-    height: height * 0.2, // 20% of screen height
+    width: "100%",
+    height: height * 0.2,
   },
 });
