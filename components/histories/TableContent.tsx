@@ -91,8 +91,8 @@ const TableContent: React.FC<TableContentProps> = ({
           </Text>
         </View>
         <View style={[styles.row, styles.between]}>
-          <Text style={[styles.amountText, { flex: 1, alignItems: 'flex-start' }]}>
-            {item.jumlah} {item.angsuran || ''}
+          <Text style={[styles.amountText, { flex: 3, alignItems: 'flex-start' }]}>
+            {item.jumlah} {"\n" + item.angsuran || ''}
           </Text>
           <Text style={[styles.dateText, { flex: 1, textAlign: 'right', alignItems: 'flex-end' }]}>
             {item.tanggal}
