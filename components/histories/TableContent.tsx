@@ -7,7 +7,6 @@ import {
   StyleSheet,
   RefreshControl,
 } from "react-native";
-import { styles as glStyles } from "@/assets/styles";
 
 interface FetchApi {
   (start: number): Promise<{ data: any[]; next: number }>;
@@ -15,7 +14,7 @@ interface FetchApi {
 
 interface TableContentProps {
   fetchApi: FetchApi;
-  next: number; // Start index for the next API call
+  next: number;
   customStyles?: any;
 }
 
@@ -24,17 +23,16 @@ const TableContent: React.FC<TableContentProps> = ({
   next: initialNext,
   customStyles = {},
 }) => {
-  const [data, setData] = useState<any[]>([]); // Stores the list of items
-  const [next, setNext] = useState<number>(initialNext); // Tracks the next index to load
-  const [isRefreshing, setIsRefreshing] = useState(false); // Pull-to-refresh state
-  const [isLoadingMore, setIsLoadingMore] = useState(false); // Infinite scroll state
-  const [hasMore, setHasMore] = useState(true); // If more data exists to load
-  const [isLoading, setIsLoading] = useState(true); // Initial loading state
+  const [data, setData] = useState<any[]>([]);
+  const [next, setNext] = useState<number>(initialNext);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch and load data (reset = true for refreshing)
   const loadData = async (reset = false) => {
     try {
-      const start = reset ? 0 : next; // Start from 0 if resetting
+      const start = reset ? 0 : next;
       const result = await fetchApi(start);
 
       if (result.data.length === 0) {
@@ -42,27 +40,24 @@ const TableContent: React.FC<TableContentProps> = ({
         return;
       }
 
-      // Resetting or appending data
       setData((prevData) => (reset ? result.data : [...prevData, ...result.data]));
 
-      // Update next index and determine if more data exists
       setNext(result.next);
       setHasMore(result.next > 0);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
-      setIsLoading(false); // Stop the loading spinner
+      setIsLoading(false);
     }
   };
 
   // Handle pull-to-refresh
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await loadData(true); // Reset to initial data
+    await loadData(true);
     setIsRefreshing(false);
   };
 
-  // Handle infinite scrolling
   const handleLoadMore = async () => {
     if (!hasMore || isLoadingMore) return;
 
@@ -73,14 +68,12 @@ const TableContent: React.FC<TableContentProps> = ({
     setIsLoadingMore(false);
   };
 
-  // Initial data load (only runs once on mount)
   useEffect(() => {
     loadData();
-  }, []); // Empty dependency array ensures this runs only once
+  }, []);
 
   const renderItem = ({ item }: { item: any }) => {
-    // Determine the status color based on item.status
-    let statusColor = 'gray'; // Default color
+    let statusColor = 'gray';
     if (item.status === 'DISETUJUI') {
       statusColor = 'green';
     } else if (item.status === 'DITOLAK') {
@@ -99,7 +92,7 @@ const TableContent: React.FC<TableContentProps> = ({
         </View>
         <View style={[styles.row, styles.between]}>
           <Text style={[styles.amountText, { flex: 1, alignItems: 'flex-start' }]}>
-            {item.jumlah}
+            {item.jumlah} {item.angsuran || ''}
           </Text>
           <Text style={[styles.dateText, { flex: 1, textAlign: 'right', alignItems: 'flex-end' }]}>
             {item.tanggal}
@@ -110,7 +103,6 @@ const TableContent: React.FC<TableContentProps> = ({
     );
   };
 
-  // If still loading on initial load
   if (isLoading) {
     return <ActivityIndicator size="large" color="#000" />;
   }
