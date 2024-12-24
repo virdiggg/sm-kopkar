@@ -118,6 +118,15 @@ export default function PinjamanScreen() {
     }
   }
 
+  const handleLamaAngsuran = (text: string) => {
+    if (parseInt(text) < 0) {
+      text = '0';
+    } else if (parseInt(text) > 24) {
+      text = '24';
+    }
+    setLamaAngsuran(text);
+  }
+
   const handleJumlahPinjam = (text: string) => {
     if (parseInt(text) < 0) {
       text = '0';
@@ -156,7 +165,7 @@ export default function PinjamanScreen() {
             )
           }} />
           <ThemedView style={styles.header}>
-            <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Menabunglah dari Pengailan agar Kelak dapat Kau Gunakan untuk Masa Depanmu</Text>
+            <Text style={[glStyles.textCenter, glStyles.buttonTextTheme, { fontSize: 20 }]}>Pinjamlah dengan Bijak untuk Dipergunakan Kebutuhanmu yang Mendesak</Text>
             <Image
               source={require('@/assets/images/pinjaman.png')}
               style={[styles.logo, glStyles.imgFluid]}
@@ -182,9 +191,9 @@ export default function PinjamanScreen() {
           </ThemedView>
           <ThemedView style={[styles.row, { padding: 20 }]}>
             <TextInput
-              label="Lama Angsuran (Bulan)"
+              label="Lama Angsuran (24 Bulan)"
               value={lamaAngsuran}
-              onChangeText={setLamaAngsuran}
+              onChangeText={handleLamaAngsuran}
               keyboardType="numeric"
               style={glStyles.input}
               disabled={isLoading}
