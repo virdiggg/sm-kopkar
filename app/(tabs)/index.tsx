@@ -127,15 +127,15 @@ export default function HomeScreen() {
           </ThemedView>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToPinjaman}
+              onPress={goToProfile}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
               <Image
-                source={require('@/assets/images/pinjaman.png')}
+                source={require('@/assets/images/profile.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
-              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Pinjaman</ThemedText>
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Profile</ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
@@ -155,15 +155,15 @@ export default function HomeScreen() {
           </ThemedView>
           <ThemedView style={styles.quadrant}>
             <TouchableOpacity
-              onPress={goToProfile}
+              onPress={goToPinjaman}
               disabled={isLoading}
               style={[styles.button, glStyles.itemCenter]}
             >
               <Image
-                source={require('@/assets/images/profile.png')}
+                source={require('@/assets/images/pinjaman.png')}
                 style={[styles.logo, glStyles.imgFluid]}
               />
-              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Profile</ThemedText>
+              <ThemedText style={[glStyles.buttonTextTheme, glStyles.textBold, glStyles.textCenter]}>Pinjaman</ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
