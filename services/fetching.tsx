@@ -3,6 +3,10 @@ const API_VERSION = "v1";
 // const API_ENDPOINT = `https://knowing-engaging-hare.ngrok-free.app/kopkar/api/${API_VERSION}/`;
 const API_ENDPOINT = `https://calm-literally-beetle.ngrok-free.app/kopkar/api/${API_VERSION}/`;
 
+const TIMEOUT = 25000; // Timeout 25 detik
+const DELAY = 1000; // Delay 1 detik sebelum retry
+const RETRY = 3; // Retru 3 kali
+
 interface FetchOptions {
     headers?: { [key: string]: string };
     method?: string;
@@ -27,7 +31,7 @@ const getAuthHeaders = async (options: FetchOptions) => {
 export async function fetchWithTimeout(
     endpoint: string,
     options: FetchOptions = {},
-    timeout = 15000
+    timeout = TIMEOUT
 ): Promise<Response> {
     const mode: RequestMode = "cors";
 
@@ -46,9 +50,9 @@ export async function fetchWithTimeout(
 export async function fetchWithRetry(
     endpoint: string,
     options = {},
-    retries = 3,
-    delay = 1000,
-    timeout = 15000
+    retries = RETRY,
+    delay = DELAY,
+    timeout = TIMEOUT
 ) {
     for (let i = 1; i <= retries; i++) {
         try {
