@@ -10,8 +10,7 @@ import {
 import { Text, ActivityIndicator, Button, TextInput, HelperText } from "react-native-paper";
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from "react";
-import { router } from 'expo-router';
-import { useRouter, Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { isSignedIn } from '@/services/auth';
 import { fetchWithRetry } from "@/services/fetching";
 import { processUri, getMimeType } from "@/services/images";
