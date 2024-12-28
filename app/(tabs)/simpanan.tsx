@@ -22,7 +22,7 @@ const { width, height } = Dimensions.get("window");
 export default function SimpananScreen() {
   const [errors, setErrors] = useState({});
   const [errorMsg, setErrorMsg] = useState('');
-  const [simpananPokok, setSimpananPokok] = useState('');
+  const [simpananSukarela, setSimpananSukarela] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardIsVisible, setKeyboardIsVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -31,7 +31,7 @@ export default function SimpananScreen() {
   useEffect(() => {
     setErrors({});
     setErrorMsg('');
-    setSimpananPokok('');
+    setSimpananSukarela('');
     setIsSubmit(false);
     setSelectedImage(null);
     setIsLoading(true);
@@ -51,7 +51,7 @@ export default function SimpananScreen() {
     return () => {
       setErrors({});
       setErrorMsg('');
-      setSimpananPokok('');
+      setSimpananSukarela('');
       setIsLoading(false);
       setIsSubmit(false);
       setSelectedImage(null);
@@ -113,7 +113,7 @@ export default function SimpananScreen() {
     if (parseInt(text) < 0) {
       text = '0';
     }
-    setSimpananPokok(text);
+    setSimpananSukarela(text);
   }
 
   const handleSubmit = async () => {
@@ -122,7 +122,7 @@ export default function SimpananScreen() {
     setErrors({});
     Keyboard.dismiss();
 
-    if (simpananPokok.length === 0) {
+    if (simpananSukarela.length === 0) {
       setIsSubmit(false);
       setErrors({
         simpanan_sukarela: 'Jumlah simpanan sukarela tidak boleh kosong',
@@ -140,7 +140,7 @@ export default function SimpananScreen() {
       const mime = await getMimeType(selectedImage);
 
       const formData = new FormData();
-      formData.append('simpanan_sukarela', simpananPokok);
+      formData.append('simpanan_sukarela', simpananSukarela);
       formData.append('bukti_transfer', {
         uri: selectedImage,
         name: `photo_${Date.now()}.${mime.ext}`,
@@ -160,7 +160,7 @@ export default function SimpananScreen() {
         return;
       } else {
         showToast(response.message);
-        setSimpananPokok('');
+        setSimpananSukarela('');
         setSelectedImage(null);
         setTimeout(() => {
           router.replace("/(tabs)");
@@ -208,8 +208,8 @@ export default function SimpananScreen() {
         </ThemedView>
         <ThemedView style={[styles.row, { paddingTop: 20 }]}>
           <TextInput
-            label="Simpanan Pokok (Rp)"
-            value={simpananPokok}
+            label="Simpanan Sukarela (Rp)"
+            value={simpananSukarela}
             onChangeText={handleJumlahPinjam}
             keyboardType="numeric"
             style={glStyles.input}
