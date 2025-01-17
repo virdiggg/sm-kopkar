@@ -5,7 +5,7 @@ const API_ENDPOINT = `https://calm-literally-beetle.ngrok-free.app/kopkar/api/${
 
 const TIMEOUT = 25000; // Timeout 25 detik
 const DELAY = 1000; // Delay 1 detik sebelum retry
-const RETRY = 3; // Retru 3 kali
+const RETRY = 3; // Retry 3 kali
 
 interface FetchOptions {
     headers?: { [key: string]: string };
